@@ -39,7 +39,6 @@ public class InjectionService extends Service {
         Log.d(TAG, "Service started...");
         new Thread(() -> {
             Log.d(TAG, "Root shell acquired. Executing command...");
-
             String targetPid = executeCommand("pidof audioserver");
             Log.d(TAG,"Pid of the audioserver process:" + targetPid);
         }).start();
