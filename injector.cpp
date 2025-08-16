@@ -18,8 +18,8 @@
 
 
 struct PhdrCallbackData {
-    const char* lib_name; // The name of the library we are looking for.
-    void* base_addr;      // The base address will be stored here.
+    const char* lib_name;
+    void* base_addr;
 };
 
 int find_lib_base_callback(struct dl_phdr_info *info, size_t size, void *data) {
@@ -27,16 +27,13 @@ int find_lib_base_callback(struct dl_phdr_info *info, size_t size, void *data) {
 
     // Check if the library's name contains the name we're searching for.
     if (info->dlpi_name && strstr(info->dlpi_name, callback_data->lib_name)) {
-        // If we find it, store its base address and return 1 to stop searching.
         callback_data->base_addr = (void*)info->dlpi_addr;
         return 1;
     }
-    // Return 0 to continue to the next library.
     return 0;
 }
 
 void* get_remote_lib_address(pid_t pid,const char* lib_name){
-    //by reading the /proc/pid/maps file to get the base address of the library
     char maps_path[256];
     snprintf(maps_path, sizeof(maps_path),"/proc/%d/maps",pid);
 
@@ -103,21 +100,15 @@ long execute_remote_function(pid_t pid,void* func_addr,long* params,int num_para
         return -1;
     }
     waitpid(pid, NULL, WUNTRACED);
-
-    // 3. Continue again until the *exit* of the system call
     if (ptrace(PTRACE_SYSCALL, pid, NULL, NULL) == -1) {
         LOGD("Error: PTRACE_SYSCALL (exit) failed");
         return -1;
     }
     waitpid(pid, NULL, WUNTRACED);
-
-    // 4. Now the syscall is complete. Get the registers to find the return value in RAX.
     if (ptrace(PTRACE_GETREGS, pid, NULL, regs) == -1) {
         LOGD("Error: PTRACE_GETREGS (after call) failed");
         return -1;
     }
-
-    // The return value of the function is in the RAX register
     return regs->rax;
 }
 
