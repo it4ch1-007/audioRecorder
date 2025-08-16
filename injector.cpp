@@ -10,11 +10,30 @@
 #include <dlfcn.h>
 #include <android/log.h>
 #include <sys/user.h>
+#include <link.h>
 
 
 #define LOG_TAG "Injector.cpp"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
 
+
+struct PhdrCallbackData {
+    const char* lib_name; // The name of the library we are looking for.
+    void* base_addr;      // The base address will be stored here.
+};
+
+int find_lib_base_callback(struct dl_phdr_info *info, size_t size, void *data) {
+    PhdrCallbackData* callback_data = (PhdrCallbackData*)data;
+
+    // Check if the library's name contains the name we're searching for.
+    if (info->dlpi_name && strstr(info->dlpi_name, callback_data->lib_name)) {
+        // If we find it, store its base address and return 1 to stop searching.
+        callback_data->base_addr = (void*)info->dlpi_addr;
+        return 1;
+    }
+    // Return 0 to continue to the next library.
+    return 0;
+}
 
 void* get_remote_lib_address(pid_t pid,const char* lib_name){
     //by reading the /proc/pid/maps file to get the base address of the library
@@ -32,24 +51,37 @@ void* get_remote_lib_address(pid_t pid,const char* lib_name){
     return nullptr;
 }
 
+void* get_local_lib_address(const char* lib_name){
+    PhdrCallbackData data;
+    data.lib_name = lib_name;
+    data.base_addr = nullptr;
+
+    dl_iterate_phdr(find_lib_base_callback, &data);
+
+    return data.base_addr;
+}
+
 void* get_remote_function_address(pid_t pid,const char* lib_name,const void* local_function_addr){
-    void* local_lib_addr = dlopen(lib_name,RTLD_LAZY);
+    void* local_lib_addr = get_local_lib_address(lib_name);
+    LOGD("LOCAL ADDRESS: %p",local_lib_addr);
     if(!local_lib_addr) return nullptr;
 
     void* remote_lib_addr = get_remote_lib_address(pid,lib_name);
+    LOGD("REMOTE ADDRESS: %p",remote_lib_addr);
     if(!remote_lib_addr){
-        LOGD(LOG_TAG,"UNABLE TO GE THE REMOTE LIBRARY ADDRESS !!");
+        LOGD("UNABLE TO GET THE REMOTE LIBRARY ADDRESS !!");
         dlclose(local_lib_addr);
         return nullptr;
     }
 
     long fn_off = (long)local_function_addr - (long)local_lib_addr;
-    dlclose(local_lib_addr);
+    LOGD("Function offset: %ld",fn_off);
 
     return (void*)((long)remote_lib_addr + fn_off);
 }
 
 long execute_remote_function(pid_t pid,void* func_addr,long* params,int num_params,struct user_regs_struct* regs){
+    LOGD("Executing the fn...");
     //setting up the args for the fn
     if(num_params>0) regs->rdi = params[0];
     if(num_params>0) regs->rsi = params[1];
@@ -57,17 +89,35 @@ long execute_remote_function(pid_t pid,void* func_addr,long* params,int num_para
     if(num_params>0) regs->rcx = params[3];
     if(num_params>0) regs->r8 = params[4];
     if(num_params>0) regs->r9 = params[5];
-
     regs->rip = (unsigned long)func_addr;
-    ptrace(PTRACE_SETREGS,pid,NULL,NULL);
-    ptrace(PTRACE_CONT,pid,NULL,NULL);
 
-    //wait till the fn is completely executed.
-    int status;
-    waitpid(pid,&status,WUNTRACED);
+    if (ptrace(PTRACE_SETREGS, pid, NULL, regs) == -1) {
+        LOGD("Error: PTRACE_SETREGS failed");
+        return -1;
+    }
+    LOGD("Setting rip to %p", (void*)regs->rip);
 
-    //finding the return value of the fn
-    ptrace(PTRACE_GETREGS,pid,NULL,regs);
+    // 2. Continue until the *entry* of the system call
+    if (ptrace(PTRACE_SYSCALL, pid, NULL, NULL) == -1) {
+        LOGD("Error: PTRACE_SYSCALL (entry) failed");
+        return -1;
+    }
+    waitpid(pid, NULL, WUNTRACED);
+
+    // 3. Continue again until the *exit* of the system call
+    if (ptrace(PTRACE_SYSCALL, pid, NULL, NULL) == -1) {
+        LOGD("Error: PTRACE_SYSCALL (exit) failed");
+        return -1;
+    }
+    waitpid(pid, NULL, WUNTRACED);
+
+    // 4. Now the syscall is complete. Get the registers to find the return value in RAX.
+    if (ptrace(PTRACE_GETREGS, pid, NULL, regs) == -1) {
+        LOGD("Error: PTRACE_GETREGS (after call) failed");
+        return -1;
+    }
+
+    // The return value of the function is in the RAX register
     return regs->rax;
 }
 
@@ -82,7 +132,7 @@ int write_to_remote_address(pid_t pid,void* dest,const void* src,size_t size){
 }
 int main(int argc,char** argv){
     if(argc!=3){
-        LOGD(LOG_TAG,"Usage: injector <pid> <lib_path>");
+        LOGD("Usage: injector <pid> <lib_path>");
         return -1;
     }
 
@@ -105,7 +155,7 @@ int main(int argc,char** argv){
     memcpy(&temp_regs,&original_regs,sizeof(struct user_regs_struct));
 
     //gets the address if dlopen fn inside the target process's memory
-    void* remote_dlopen_addr = get_remote_function_address(target_process_pid,"/system/bin/linker64",(void*)dlopen);
+    void* remote_dlopen_addr = get_remote_function_address(target_process_pid,"libdl.so",(void*)dlopen);
     if(!remote_dlopen_addr){
         LOGD("Error: Could not find the dlopen address!!");
         ptrace(PTRACE_DETACH,target_process_pid,NULL,NULL);
@@ -120,15 +170,18 @@ int main(int argc,char** argv){
         ptrace(PTRACE_DETACH,target_process_pid,NULL,NULL);
         return -1;
     }
+    LOGD("Remote mmap address: %p",remote_mmap_addr);
 
-    //Calling the fn mmap of the targte process' instance
+    //Calling the fn mmap of the target process' instance
     long mmap_params[] = {0, static_cast<long>(strlen(lib_path)+1),PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,0,0};
+    LOGD("Executing mmap function...");
     void* remote_path_addr = (void*)execute_remote_function(target_process_pid,remote_mmap_addr,mmap_params,6,&temp_regs);
-
+    LOGD("Executed mmap function successfully...");
     //writing the library path inside the target process' memory
     write_to_remote_address(target_process_pid,remote_path_addr,lib_path, strlen(lib_path)+1);
+    LOGD("Written the hooking library path to remote process' memory...");
 
-    //Now calling dlopen with the path of our liubrary written into the target process' memory
+    //Now calling dlopen with the path of our library written into the target process' memory
     long dlopen_params[] = {(long)remote_path_addr,RTLD_NOW};
     void* dlopen_ret = (void*) execute_remote_function(target_process_pid,remote_dlopen_addr,dlopen_params,2,&temp_regs);
 

@@ -2,7 +2,6 @@
 //// Created by it4ch1 on 8/15/25.
 ////
 //#include "dobby.h"
-#include <android/log.h>
 //#include <cstdio>
 //
 #define LOG_TAG "Hook.cpp"
@@ -52,3 +51,11 @@
 void on_load(){
     LOGI("LOADED");
 }
+
+//extern "C" JNIEXPORT jboolean JNICALL
+//Java_com_example_audiorecorder_MainActivity_stringFromJNI(
+//        JNIEnv* env,
+//        jobject /* this */) {
+//    std::string hello = "Hello from C++";
+//    return JNI_TRUE;
+//}

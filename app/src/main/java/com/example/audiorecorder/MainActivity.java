@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.example.audiorecorder.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
             stopService(stopIntent);
             Toast.makeText(this,"Injection Service Stopped..",Toast.LENGTH_SHORT).show();
         });
-
     }
 
     public void attackFn(){

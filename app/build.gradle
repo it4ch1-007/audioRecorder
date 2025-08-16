@@ -20,6 +20,18 @@ android {
         }
     }
 
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            // Copy custom native binaries into jniLibs
+            def abiDir = "${buildDir}/intermediates/cmake/${variant.name}/obj"
+            def jniLibsDir = "${projectDir}/src/main/jniLibs"
+            copy {
+                from("${abiDir}")
+                into("${jniLibsDir}")
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false

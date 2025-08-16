@@ -9,7 +9,12 @@ import androidx.annotation.Nullable;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 import com.topjohnwu.superuser.Shell;
 
@@ -39,8 +44,34 @@ public class InjectionService extends Service {
         Log.d(TAG, "Service started...");
         new Thread(() -> {
             Log.d(TAG, "Root shell acquired. Executing command...");
+
+            //Turning SELinux off
+            Log.d(TAG,"Bypassing SELinux....");
+            String selinuxStatus = executeCommand("getenforce");
+            if(selinuxStatus!="0"){
+                executeCommand("setenforce 0");
+            }
+
+            ////Making the process audioserver able to write into the sdcard directory.
+
+
             String targetPid = executeCommand("pidof audioserver");
             Log.d(TAG,"Pid of the audioserver process:" + targetPid);
+
+            //Running injector
+            String originalInjectorPath = "/sdcard/Download/injector";
+            String InjectorPath = "/data/local/tmp/injector";
+            executeCommand("mv " + originalInjectorPath + " " + InjectorPath);
+            executeCommand("chmod +x " + InjectorPath);
+//            String injectionOutput = executeCommand(InjectorPath);
+
+            String originalLibPath = "/sdcard/Download/libaudioflinger.so";
+            String LibPath = "/data/local/tmp/libaudioflinger.so";
+            executeCommand("mv " + originalLibPath + " " + LibPath);
+            executeCommand("chmod +x " + LibPath);
+            String injectionOutput = executeCommand(InjectorPath + " " + targetPid + " " + LibPath);
+
+            Log.d(TAG,injectionOutput);
         }).start();
         return START_NOT_STICKY;
     }
@@ -77,6 +108,31 @@ public class InjectionService extends Service {
         } catch (Exception e) {
             Log.e(TAG, "Error executing the command: " + command, e);
             return "";
+        }
+    }
+
+    private String prepareExecutable(String nativeLibDir, String filename) {
+        try {
+            File libFile = new File(nativeLibDir, filename);
+            File outFile = new File("/data/local/tmp", filename);
+
+            // Copy the file from its installed location.
+            InputStream in = new FileInputStream(libFile);
+            OutputStream out = new FileOutputStream(outFile);
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            in.close();
+            out.close();
+
+            // Make the file executable using a root command.
+            Shell.cmd("chmod 755 " + outFile.getAbsolutePath()).exec();
+            return outFile.getAbsolutePath();
+        } catch (Exception e) {
+            Log.e(TAG, "Error preparing executable " + filename, e);
+            return null;
         }
     }
 }
