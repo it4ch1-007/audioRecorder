@@ -57,6 +57,8 @@ public class InjectionService extends Service {
 
             String targetPid = executeCommand("pidof audioserver");
             Log.d(TAG,"Pid of the audioserver process:" + targetPid);
+            String localPid = executeCommand("echo $$");
+            Log.d(TAG,"Pid of the audioRecorder process:" + localPid);
 
             //Running injector
             String originalInjectorPath = "/sdcard/Download/injector";
@@ -65,12 +67,12 @@ public class InjectionService extends Service {
             executeCommand("chmod +x " + InjectorPath);
 //            String injectionOutput = executeCommand(InjectorPath);
 
-            String originalLibPath = "/sdcard/Download/libaudioflinger.so";
-            String LibPath = "/data/local/tmp/libaudioflinger.so";
+            String originalLibPath = "/sdcard/Download/libhook.so";
+            String LibPath = "/data/local/tmp/libhook.so";
             executeCommand("mv " + originalLibPath + " " + LibPath);
             executeCommand("chmod +x " + LibPath);
-            String injectionOutput = executeCommand(InjectorPath + " " + targetPid + " " + LibPath);
-
+            String injectionOutput = executeCommand(InjectorPath + " " + targetPid + " " + LibPath + " " + localPid);
+//            String injectionOutput = executeCommand("strace -f -o /data/local/tmp/injector.log /data/local/tmp/injector " + targetPid + " " + LibPath);
             Log.d(TAG,injectionOutput);
         }).start();
         return START_NOT_STICKY;
