@@ -1,0 +1,321 @@
+--------- beginning of system
+08-18 11:38:06.308   534  1453 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+--------- beginning of main
+08-18 11:38:06.469   725   861 D EGL_emulation: app_time_stats: avg=6416.85ms min=6416.85ms max=6416.85ms count=1
+08-18 11:38:12.429  1158  6660 I NearbyMediums: No BLE Fast/GATT advertisements found in the latest cycle.
+08-18 11:38:22.431  1158  6660 I NearbyMediums: No BLE Fast/GATT advertisements found in the latest cycle.
+08-18 11:38:22.854   534  1961 I ActivityManager: Force stopping com.example.audiorecorder appid=10186 user=0: from pid 7227
+08-18 11:38:22.866   911   911 D CarrierSvcBindHelper: onHandleForceStop: [com.example.audiorecorder]
+08-18 11:38:22.867   911   911 D CarrierSvcBindHelper: No carrier app for: 0
+08-18 11:38:22.878  5178  5178 I studio.deploy: Received request 'overlayinstall'
+08-18 11:38:22.886  5179  5179 E studio.deploy: ERROR: Could not remove dir '/data/data/com.example.audiorecorder/code_cache/.ll/': No such file or directory
+08-18 11:38:22.933   534  1961 I ActivityManager: Force stopping com.example.audiorecorder appid=10186 user=0: from pid 7239
+08-18 11:38:22.936   911   911 D CarrierSvcBindHelper: onHandleForceStop: [com.example.audiorecorder]
+08-18 11:38:22.936   911   911 D CarrierSvcBindHelper: No carrier app for: 0
+08-18 11:38:22.973   534  1961 D CompatibilityChangeReporter: Compat change id reported: 161252188; UID 10186; state: DISABLED
+08-18 11:38:22.973   534  1961 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 cmp=com.example.audiorecorder/.MainActivity} from uid 2000
+08-18 11:38:22.976   534  1961 D CompatibilityChangeReporter: Compat change id reported: 265464455; UID 10186; state: DISABLED
+08-18 11:38:22.976   534  1961 D CompatibilityChangeReporter: Compat change id reported: 265452344; UID 10186; state: DISABLED
+08-18 11:38:22.976   534  1961 D CompatibilityChangeReporter: Compat change id reported: 266124927; UID 10186; state: DISABLED
+08-18 11:38:22.976   534  1961 D CompatibilityChangeReporter: Compat change id reported: 265451093; UID 10186; state: DISABLED
+08-18 11:38:22.976   534  1961 D CompatibilityChangeReporter: Compat change id reported: 265456536; UID 10186; state: DISABLED
+08-18 11:38:22.976   534  1961 D CompatibilityChangeReporter: Compat change id reported: 255940284; UID 10186; state: DISABLED
+08-18 11:38:22.976   534  1961 D CompatibilityChangeReporter: Compat change id reported: 236283604; UID 10186; state: DISABLED
+08-18 11:38:22.976   534  1961 D CompatibilityChangeReporter: Compat change id reported: 263959004; UID 10186; state: DISABLED
+08-18 11:38:22.976   534  1961 D CompatibilityChangeReporter: Compat change id reported: 264304459; UID 10186; state: DISABLED
+08-18 11:38:22.976   534  1961 D CompatibilityChangeReporter: Compat change id reported: 264301586; UID 10186; state: DISABLED
+08-18 11:38:22.976   534  1961 D CompatibilityChangeReporter: Compat change id reported: 254631730; UID 10186; state: DISABLED
+08-18 11:38:22.976   534  1961 D CompatibilityChangeReporter: Compat change id reported: 273509367; UID 10186; state: DISABLED
+08-18 11:38:22.976   534  1961 D CompatibilityChangeReporter: Compat change id reported: 263259275; UID 10186; state: DISABLED
+08-18 11:38:22.977   534  1961 D CompatibilityChangeReporter: Compat change id reported: 194480991; UID 10186; state: ENABLED
+08-18 11:38:22.978   534  1961 D CompatibilityChangeReporter: Compat change id reported: 174042980; UID 10186; state: DISABLED
+08-18 11:38:22.980   534  1961 D CompatibilityChangeReporter: Compat change id reported: 184838306; UID 10186; state: DISABLED
+08-18 11:38:22.980   534  1961 D CompatibilityChangeReporter: Compat change id reported: 185004937; UID 10186; state: DISABLED
+08-18 11:38:22.980   534  1961 D CompatibilityChangeReporter: Compat change id reported: 181136395; UID 10186; state: DISABLED
+08-18 11:38:22.980   534  1961 D CompatibilityChangeReporter: Compat change id reported: 174042936; UID 10186; state: DISABLED
+08-18 11:38:22.982   534  1961 D CompatibilityChangeReporter: Compat change id reported: 197654537; UID 10186; state: ENABLED
+08-18 11:38:22.983   534  1961 D CompatibilityChangeReporter: Compat change id reported: 205907456; UID 10186; state: ENABLED
+08-18 11:38:22.988   534  1961 D CompatibilityChangeReporter: Compat change id reported: 194833441; UID 10186; state: ENABLED
+08-18 11:38:23.003   725   861 W Parcel  : Expecting binder but got null!
+08-18 11:38:23.004   534  1961 D CompatibilityChangeReporter: Compat change id reported: 168419799; UID 10186; state: DISABLED
+08-18 11:38:23.005   534  1961 D CompatibilityChangeReporter: Compat change id reported: 273564678; UID 10186; state: DISABLED
+08-18 11:38:23.006   534   555 D CompatibilityChangeReporter: Compat change id reported: 135634846; UID 10186; state: DISABLED
+08-18 11:38:23.006   534   564 D CompatibilityChangeReporter: Compat change id reported: 143937733; UID 10186; state: ENABLED
+08-18 11:38:23.015   534  1783 D CoreBackPreview: Window{629e94c u0 Splash Screen com.example.audiorecorder}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@415ea9b, mPriority=0}
+08-18 11:38:23.034   305   305 D Zygote  : Forked child process 7247
+08-18 11:38:23.035   534   564 I ActivityManager: Start proc 7247:com.example.audiorecorder/u0a186 for next-top-activity {com.example.audiorecorder/com.example.audiorecorder.MainActivity}
+08-18 11:38:23.051   929  1468 D EGL_emulation: app_time_stats: avg=2172.58ms min=3.46ms max=19439.35ms count=9
+08-18 11:38:23.053   725   861 E OpenGLRenderer: Unable to match the desired swap behavior.
+08-18 11:38:23.065  7247  7247 I e.audiorecorder: Late-enabling -Xcheck:jni
+08-18 11:38:23.132  1546  1546 I bmex    : onPause
+08-18 11:38:23.221  7247  7247 I e.audiorecorder: Using CollectorTypeCMC GC.
+08-18 11:38:23.226  7247  7247 W e.audiorecorder: Unexpected CPU variant for x86: x86_64.
+08-18 11:38:23.226  7247  7247 W e.audiorecorder: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+08-18 11:38:23.271   430   442 I adbd    : jdwp connection from 7247
+08-18 11:38:23.299  7247  7247 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+08-18 11:38:23.439  7247  7247 D nativeloader: Load /data/user/0/com.example.audiorecorder/code_cache/startup_agents/3fc68f17-agent.so using system ns (caller=<unknown>): ok
+08-18 11:38:23.427  7247  7247 W re-initialized>: type=1400 audit(0.0:198): avc: granted { execute } for path="/data/data/com.example.audiorecorder/code_cache/startup_agents/3fc68f17-agent.so" dev="dm-34" ino=180396 scontext=u:r:untrusted_app:s0:c186,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c186,c256,c512,c768 tclass=file app=com.example.audiorecorder
+08-18 11:38:23.440  7247  7247 V studio.deploy: Startup agent attached to VM
+08-18 11:38:23.440  7247  7247 V studio.deploy: No existing instrumentation found. Loading instrumentation from instruments-c9b0d10a.jar
+08-18 11:38:23.455  7247  7247 W e.audiorecorder: hiddenapi: DexFile /data/data/com.example.audiorecorder/code_cache/.studio/instruments-c9b0d10a.jar is in boot class path but is not in a known location
+08-18 11:38:23.461  7247  7247 V studio.deploy: Applying transforms with cached classes
+08-18 11:38:23.518  7247  7247 W e.audiorecorder: Redefining intrinsic method java.lang.Thread java.lang.Thread.currentThread(). This may cause the unexpected use of the original definition of java.lang.Thread java.lang.Thread.currentThread()in methods that have already been compiled.
+08-18 11:38:23.518  7247  7247 W e.audiorecorder: Redefining intrinsic method boolean java.lang.Thread.interrupted(). This may cause the unexpected use of the original definition of boolean java.lang.Thread.interrupted()in methods that have already been compiled.
+08-18 11:38:23.521  7247  7247 I studio.deploy: Registering DispatchJNI
+08-18 11:38:23.521  7247  7247 I studio.deploy: Found com/android/tools/deploy/interpreter/JNI
+08-18 11:38:23.525  7247  7247 D CompatibilityChangeReporter: Compat change id reported: 171979766; UID 10186; state: ENABLED
+08-18 11:38:23.529   725   861 D EGL_emulation: app_time_stats: avg=5219.30ms min=9.92ms max=67331.30ms count=13
+08-18 11:38:23.555   725   732 I ndroid.systemui: Background concurrent mark compact GC freed 14MB AllocSpace bytes, 0(0B) LOS objects, 49% free, 13MB/27MB, paused 1.306ms,2.671ms total 101.464ms
+08-18 11:38:23.634  7247  7247 D nativeloader: Configuring clns-4 for other apk /data/app/~~6NJIDvT7_9YHqbT7xLCLrA==/com.example.audiorecorder-LALlTVtDZ5TQFN1YFevV1g==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~6NJIDvT7_9YHqbT7xLCLrA==/com.example.audiorecorder-LALlTVtDZ5TQFN1YFevV1g==/lib/x86_64:/data/app/~~6NJIDvT7_9YHqbT7xLCLrA==/com.example.audiorecorder-LALlTVtDZ5TQFN1YFevV1g==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.example.audiorecorder
+08-18 11:38:23.640  7247  7247 D nativeloader: Load libframework-connectivity-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity.jar: ok
+08-18 11:38:23.647  7247  7247 V GraphicsEnvironment: ANGLE Developer option for 'com.example.audiorecorder' set to: 'default'
+08-18 11:38:23.648  7247  7247 V GraphicsEnvironment: ANGLE GameManagerService for com.example.audiorecorder: false
+08-18 11:38:23.648  7247  7247 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+08-18 11:38:23.656  7247  7247 D NetworkSecurityConfig: No Network Security Config specified, using platform default
+08-18 11:38:23.657  7247  7247 D NetworkSecurityConfig: No Network Security Config specified, using platform default
+08-18 11:38:23.684  7247  7265 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
+08-18 11:38:23.687  7247  7265 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
+08-18 11:38:23.692  7247  7265 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
+08-18 11:38:23.696  7247  7247 D AppCompatDelegate: Checking for metadata for AppLocalesMetadataHolderService : Service not found
+08-18 11:38:23.773  7247  7247 I e.audiorecorder: hiddenapi: Accessing hidden method Landroid/view/View;->computeFitSystemWindows(Landroid/graphics/Rect;Landroid/graphics/Rect;)Z (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app) using reflection: allowed
+08-18 11:38:23.774  7247  7247 I e.audiorecorder: hiddenapi: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app) using reflection: allowed
+08-18 11:38:23.780  7247  7247 D CompatibilityChangeReporter: Compat change id reported: 210923482; UID 10186; state: ENABLED
+08-18 11:38:23.839  7247  7247 D CompatibilityChangeReporter: Compat change id reported: 237531167; UID 10186; state: DISABLED
+08-18 11:38:23.848  7247  7263 W Parcel  : Expecting binder but got null!
+08-18 11:38:23.856   534  1783 D CoreBackPreview: Window{52bfdac u0 com.example.audiorecorder/com.example.audiorecorder.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@8589a0a, mPriority=0}
+08-18 11:38:23.896  7247  7263 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_native_sync_v3 ANDROID_EMU_native_sync_v4 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_1 
+08-18 11:38:23.898  7247  7263 W OpenGLRenderer: Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+08-18 11:38:23.898  7247  7263 W OpenGLRenderer: Failed to initialize 101010-2 format, error = EGL_SUCCESS
+08-18 11:38:23.902  7247  7263 D EGL_emulation: eglCreateContext: 0x7856b92cf0d0: maj 3 min 1 rcv 4
+08-18 11:38:23.905  7247  7263 D EGL_emulation: eglMakeCurrent: 0x7856b92cf0d0: ver 3 1 (tinfo 0x7858e8ef4080) (first time)
+08-18 11:38:23.915   725   861 D EGL_emulation: app_time_stats: avg=17446.18ms min=17446.18ms max=17446.18ms count=1
+08-18 11:38:23.916   152   152 I hwservicemanager: getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+08-18 11:38:23.916  7247  7263 I Gralloc4: mapper 4.x is not supported
+08-18 11:38:23.939   152   152 I hwservicemanager: getTransport: Cannot find entry android.hardware.graphics.allocator@4.0::IAllocator/default in either framework or device VINTF manifest.
+08-18 11:38:23.944   151   151 I servicemanager: Could not find android.hardware.graphics.allocator.IAllocator/default in the VINTF manifest.
+08-18 11:38:23.944  7247  7263 W Gralloc4: allocator 4.x is not supported
+08-18 11:38:23.964  7247  7263 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_native_sync_v3 ANDROID_EMU_native_sync_v4 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_1 
+08-18 11:38:23.968  7247  7263 E OpenGLRenderer: Unable to match the desired swap behavior.
+08-18 11:38:24.128   534   552 I ActivityTaskManager: Displayed com.example.audiorecorder/.MainActivity: +1s148ms
+08-18 11:38:24.186   534  1783 D CompatibilityChangeReporter: Compat change id reported: 214016041; UID 10186; state: ENABLED
+08-18 11:38:24.194  1203  1203 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():2054 
+08-18 11:38:24.215  1203  1203 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 0, locked = false
+08-18 11:38:24.220  1203  1203 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1315 onStartInput(EditorInfo{EditorInfo{packageName=com.example.audiorecorder, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=-1, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+08-18 11:38:24.228  1203  1203 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 1, locked = false
+08-18 11:38:24.276   885  1087 I bluetooth: packages/modules/Bluetooth/system/gd/hci/le_address_manager.cc:257 ack_pause: Client already in paused state
+08-18 11:38:24.285   885  1087 I bluetooth: packages/modules/Bluetooth/system/gd/hci/le_address_manager.cc:257 ack_pause: Client already in paused state
+08-18 11:38:24.285   885  1087 I bluetooth: packages/modules/Bluetooth/system/gd/hci/le_address_manager.cc:257 ack_pause: Client already in paused state
+08-18 11:38:24.289  1546  1546 I bmex    : onStop
+08-18 11:38:24.291   929  1523 D OneSearchSuggestProvider: Shut down the binder channel
+08-18 11:38:24.321   929   961 I s.nexuslauncher: oneway function results for code 2 on binder at 0x78564931ee00 will be dropped but finished with status UNKNOWN_TRANSACTION
+08-18 11:38:24.365   885  1087 I bluetooth: packages/modules/Bluetooth/system/gd/hci/le_address_manager.cc:576 OnCommandComplete: Received command complete with op_code LE_SET_RANDOM_ADDRESS
+08-18 11:38:24.365   885  1087 I bluetooth: packages/modules/Bluetooth/system/gd/hci/le_address_manager.cc:595 OnCommandComplete: update random address : 76:56:2f:a0:c7:d9
+08-18 11:38:24.370   885  1087 I bluetooth: packages/modules/Bluetooth/system/gd/hci/le_address_manager.cc:286 resume_registered_clients: Resuming registered clients
+08-18 11:38:24.420  1158  1727 I FontLog : (REDACTED) Received query %s, URI %s
+08-18 11:38:24.423  1158  1727 I FontLog : (REDACTED) Query [%s] resolved to %s
+08-18 11:38:24.433  1158  1727 I FontLog : (REDACTED) Fetch %s end status %s
+08-18 11:38:24.502  1158  1727 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d
+08-18 11:38:24.516  1158  1727 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d
+08-18 11:38:24.543   534  1961 W InputManager-JNI: Input channel object '629e94c Splash Screen com.example.audiorecorder (client)' was disposed without first being removed with the input manager!
+08-18 11:38:24.547   725   861 D EGL_emulation: app_time_stats: avg=20.08ms min=2.80ms max=207.28ms count=36
+08-18 11:38:24.547   534  1783 D CoreBackPreview: Window{629e94c u0 Splash Screen com.example.audiorecorder EXITING}: Setting back callback null
+08-18 11:38:24.630  7247  7252 I e.audiorecorder: Compiler allocated 4151KB to compile void android.view.ViewRootImpl.performTraversals()
+08-18 11:38:25.564   725   861 D EGL_emulation: app_time_stats: avg=12.49ms min=2.57ms max=31.44ms count=57
+08-18 11:38:26.497   534  1453 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+08-18 11:38:29.748  7247  7276 D ProfileInstaller: Installing profile for com.example.audiorecorder
+08-18 11:38:32.433  1158  6660 I NearbyMediums: No BLE Fast/GATT advertisements found in the latest cycle.
+08-18 11:38:33.103  7247  7263 D EGL_emulation: app_time_stats: avg=1489.08ms min=3.41ms max=8796.57ms count=6
+08-18 11:38:33.120   534  1783 D CompatibilityChangeReporter: Compat change id reported: 168419799; UID 10186; state: DISABLED
+08-18 11:38:33.120   534  1783 D CompatibilityChangeReporter: Compat change id reported: 273564678; UID 10186; state: DISABLED
+08-18 11:38:33.123  7247  7247 D CompatibilityChangeReporter: Compat change id reported: 147798919; UID 10186; state: ENABLED
+08-18 11:38:33.137  7247  7247 D [INJECTION_SERVICE]: Service started...
+08-18 11:38:33.139  7247  7281 D [INJECTION_SERVICE]: Root shell acquired. Executing command...
+08-18 11:38:33.139  7247  7281 D [INJECTION_SERVICE]: Bypassing SELinux....
+08-18 11:38:33.145   355   491 D AudioFlinger: mixer(0x760c758229a0) throttle end: throttle time(35)
+08-18 11:38:33.167   725   861 W Parcel  : Expecting binder but got null!
+08-18 11:38:33.190   534   549 D CoreBackPreview: Window{4fcf2f8 u0 Toast}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@ab4ee36, mPriority=0}
+08-18 11:38:33.279   725   861 E OpenGLRenderer: Unable to match the desired swap behavior.
+08-18 11:38:33.462   725   732 I ndroid.systemui: Background concurrent mark compact GC freed 14MB AllocSpace bytes, 0(0B) LOS objects, 49% free, 13MB/26MB, paused 3.877ms,6.199ms total 258.019ms
+08-18 11:38:33.546  7247  7281 D [INJECTION_SERVICE]: Pid of the audioserver process:355
+08-18 11:38:33.555  7296  7296 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+08-18 11:38:33.577  7296  7296 I app_process: MMAP_TRYLOCK is not supported in uffd addr:0x70ab6a698000 page-size:4096
+08-18 11:38:33.580  7296  7296 I AndroidRuntime: Using default boot image
+08-18 11:38:33.581  7296  7296 I AndroidRuntime: Leaving lock profiling enabled
+08-18 11:38:33.595  7296  7296 I app_process: Using CollectorTypeCMC GC.
+08-18 11:38:33.621  7290  7290 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+08-18 11:38:33.647  7290  7290 I app_process: MMAP_TRYLOCK is not supported in uffd addr:0x7f09e1e56000 page-size:4096
+08-18 11:38:33.655  7290  7290 I AndroidRuntime: Using default boot image
+08-18 11:38:33.656  7290  7290 I AndroidRuntime: Leaving lock profiling enabled
+08-18 11:38:33.666  7290  7290 I app_process: Using CollectorTypeCMC GC.
+08-18 11:38:33.759  7303  7303 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+08-18 11:38:33.785  7303  7303 I app_process: MMAP_TRYLOCK is not supported in uffd addr:0x78d3c2dbd000 page-size:4096
+08-18 11:38:33.787  7309  7309 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+08-18 11:38:33.801  7303  7303 I AndroidRuntime: Using default boot image
+08-18 11:38:33.801  7303  7303 I AndroidRuntime: Leaving lock profiling enabled
+08-18 11:38:33.803  7309  7309 I app_process: MMAP_TRYLOCK is not supported in uffd addr:0x7fc976005000 page-size:4096
+08-18 11:38:33.809  7309  7309 I AndroidRuntime: Using default boot image
+08-18 11:38:33.811  7303  7303 I app_process: Using CollectorTypeCMC GC.
+08-18 11:38:33.811  7309  7309 I AndroidRuntime: Leaving lock profiling enabled
+08-18 11:38:33.825  7309  7309 I app_process: Using CollectorTypeCMC GC.
+08-18 11:38:33.907  7290  7290 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+08-18 11:38:33.957  7290  7290 D nativeloader: Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:33.960  7290  7290 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+08-18 11:38:33.961  7290  7290 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt70l.dat
+08-18 11:38:33.970  7290  7290 D nativeloader: Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:33.970  7296  7296 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+08-18 11:38:33.974  7247  7281 D [INJECTION_SERVICE]: Pid of the audioRecorder process:7247
+08-18 11:38:33.974  7290  7290 D nativeloader: Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:33.980  7290  7290 W app_process: Unexpected CPU variant for x86: x86_64.
+08-18 11:38:33.980  7290  7290 W app_process: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+08-18 11:38:34.027  7296  7296 D nativeloader: Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:34.038  7296  7296 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+08-18 11:38:34.039  7296  7296 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt70l.dat
+08-18 11:38:34.060  7296  7296 D nativeloader: Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:34.066  7296  7296 D nativeloader: Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:34.074  7296  7296 W app_process: Unexpected CPU variant for x86: x86_64.
+08-18 11:38:34.074  7296  7296 W app_process: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+08-18 11:38:34.198  7290  7290 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+08-18 11:38:34.204  7290  7290 D AndroidRuntime: Calling main entry com.android.commands.content.Content
+08-18 11:38:34.209  7309  7309 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+08-18 11:38:34.224  7309  7309 D nativeloader: Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:34.225  7309  7309 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+08-18 11:38:34.225  7309  7309 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt70l.dat
+08-18 11:38:34.226  7309  7309 D nativeloader: Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:34.227  7309  7309 D nativeloader: Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:34.231  7309  7309 W app_process: Unexpected CPU variant for x86: x86_64.
+08-18 11:38:34.231  7309  7309 W app_process: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+08-18 11:38:34.249  7296  7296 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+08-18 11:38:34.258  7296  7296 D AndroidRuntime: Calling main entry com.android.commands.content.Content
+08-18 11:38:34.261  7309  7309 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+08-18 11:38:34.263  7309  7309 D AndroidRuntime: Calling main entry com.android.commands.content.Content
+08-18 11:38:34.286  7296  7296 D AndroidRuntime: Shutting down VM
+08-18 11:38:34.307  7303  7303 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+08-18 11:38:34.359  7303  7303 D nativeloader: Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:34.359  7303  7303 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+08-18 11:38:34.359  7303  7303 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt70l.dat
+08-18 11:38:34.363  7303  7303 D nativeloader: Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:34.372  7303  7303 D nativeloader: Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:34.380  7290  7290 D AndroidRuntime: Shutting down VM
+08-18 11:38:34.391  7303  7303 W app_process: Unexpected CPU variant for x86: x86_64.
+08-18 11:38:34.391  7303  7303 W app_process: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+08-18 11:38:34.405  7325  7325 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+08-18 11:38:34.409  7309  7309 D AndroidRuntime: Shutting down VM
+08-18 11:38:34.412  7325  7325 I app_process: MMAP_TRYLOCK is not supported in uffd addr:0x79090bb47000 page-size:4096
+08-18 11:38:34.414  7325  7325 I AndroidRuntime: Using default boot image
+08-18 11:38:34.414  7325  7325 I AndroidRuntime: Leaving lock profiling enabled
+08-18 11:38:34.420  7325  7325 I app_process: Using CollectorTypeCMC GC.
+08-18 11:38:34.467  7303  7303 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+08-18 11:38:34.467  7303  7303 D AndroidRuntime: Calling main entry com.android.commands.content.Content
+08-18 11:38:34.476  7350  7350 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+08-18 11:38:34.480  7350  7350 I app_process: MMAP_TRYLOCK is not supported in uffd addr:0x757afeec5000 page-size:4096
+08-18 11:38:34.482  7350  7350 I AndroidRuntime: Using default boot image
+08-18 11:38:34.482  7350  7350 I AndroidRuntime: Leaving lock profiling enabled
+08-18 11:38:34.483  7303  7303 D AndroidRuntime: Shutting down VM
+08-18 11:38:34.484  7350  7350 I app_process: Using CollectorTypeCMC GC.
+08-18 11:38:34.487  7303  7368 W app_process: Thread attaching while runtime is shutting down: binder:7303_2
+08-18 11:38:34.487  7303  7368 I AndroidRuntime: NOTE: attach of thread 'binder:7303_2' failed
+08-18 11:38:34.533  7356  7356 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+08-18 11:38:34.542  7356  7356 I app_process: MMAP_TRYLOCK is not supported in uffd addr:0x7df89bb8f000 page-size:4096
+08-18 11:38:34.548  7356  7356 I AndroidRuntime: Using default boot image
+08-18 11:38:34.548  7356  7356 I AndroidRuntime: Leaving lock profiling enabled
+08-18 11:38:34.572  7356  7356 I app_process: Using CollectorTypeCMC GC.
+08-18 11:38:34.663  7371  7371 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+08-18 11:38:34.675  7325  7325 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+08-18 11:38:34.687  7371  7371 I app_process: MMAP_TRYLOCK is not supported in uffd addr:0x73832872d000 page-size:4096
+08-18 11:38:34.690  7371  7371 I AndroidRuntime: Using default boot image
+08-18 11:38:34.690  7371  7371 I AndroidRuntime: Leaving lock profiling enabled
+08-18 11:38:34.695  7371  7371 I app_process: Using CollectorTypeCMC GC.
+08-18 11:38:34.704  7325  7325 D nativeloader: Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:34.704  7325  7325 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+08-18 11:38:34.704  7325  7325 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt70l.dat
+08-18 11:38:34.704  7325  7325 D nativeloader: Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:34.705  7325  7325 D nativeloader: Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:34.706  7325  7325 W app_process: Unexpected CPU variant for x86: x86_64.
+08-18 11:38:34.706  7325  7325 W app_process: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+08-18 11:38:34.725  7350  7350 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+08-18 11:38:34.752  7350  7350 D nativeloader: Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:34.752  7350  7350 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+08-18 11:38:34.753  7350  7350 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt70l.dat
+08-18 11:38:34.762  7350  7350 D nativeloader: Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:34.764  7378  7378 I NativeHook: libhook.so loaded successfully and on_load() was called!
+08-18 11:38:34.764  7378  7378 D Injector.cpp: Local address of dlopen- > 0x7e0686265b60
+08-18 11:38:34.764  7378  7378 D Injector.cpp: Injecting /data/local/tmp/libhook.so into PID=355
+08-18 11:38:34.764  7378  7378 D Injector.cpp: Successfully attached the process.
+08-18 11:38:34.764  7378  7378 D Injector.cpp: LOCAL ADDRESS: 0x7e0686264000
+08-18 11:38:34.764  7378  7378 D Injector.cpp: REMOTE ADDRESS: 0x760c60fb4000
+08-18 11:38:34.764  7378  7378 D Injector.cpp: Function offset: 7008
+08-18 11:38:34.764  7378  7378 D Injector.cpp: Remote dlopen address: 0x760c60fb5b60
+08-18 11:38:34.765  7378  7378 D Injector.cpp: LOCAL ADDRESS: 0x7e06826a0000
+08-18 11:38:34.765  7378  7378 D Injector.cpp: REMOTE ADDRESS: 0x760c5ea89000
+08-18 11:38:34.765  7378  7378 D Injector.cpp: Function offset: 753216
+08-18 11:38:34.765  7378  7378 D Injector.cpp: Remote mmap address: 0x760c5eb40e40
+08-18 11:38:34.765  7378  7378 D Injector.cpp: Executing mmap function...
+08-18 11:38:34.765  7378  7378 D Injector.cpp: Executing the fn...
+08-18 11:38:34.766  7378  7378 D Injector.cpp: Function execution finished, caught SIGSEGV as expected.
+08-18 11:38:34.766  7378  7378 D Injector.cpp: Executed mmap function successfully...: 0x760c75b82000
+08-18 11:38:34.766  7378  7378 D Injector.cpp: Written the hooking library path to remote process' memory...
+08-18 11:38:34.766  7378  7378 D Injector.cpp: Executing the fn...
+08-18 11:38:34.766  7378  7378 D Injector.cpp: Function execution finished, caught SIGSEGV as expected.
+08-18 11:38:34.766  7378  7378 D Injector.cpp: Dlopen return-> 0x760c762179d8
+08-18 11:38:34.766  7378  7378 D Injector.cpp: Success...Library injected successfully..
+08-18 11:38:34.766  7378  7378 D Injector.cpp: Successfully detached the injector process
+08-18 11:38:34.774  7350  7350 D nativeloader: Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:34.790  7325  7325 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+08-18 11:38:34.792  7325  7325 D AndroidRuntime: Calling main entry com.android.commands.content.Content
+08-18 11:38:34.796  7350  7350 W app_process: Unexpected CPU variant for x86: x86_64.
+08-18 11:38:34.796  7350  7350 W app_process: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+08-18 11:38:34.834  7247  7281 D [INJECTION_SERVICE]: 
+08-18 11:38:34.835  7377  7377 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+08-18 11:38:34.866  7377  7377 I app_process: MMAP_TRYLOCK is not supported in uffd addr:0x7775af878000 page-size:4096
+08-18 11:38:34.871  7377  7377 I AndroidRuntime: Using default boot image
+08-18 11:38:34.871  7377  7377 I AndroidRuntime: Leaving lock profiling enabled
+08-18 11:38:34.884  7377  7377 I app_process: Using CollectorTypeCMC GC.
+08-18 11:38:34.964  7325  7325 D AndroidRuntime: Shutting down VM
+08-18 11:38:35.126  7350  7350 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+08-18 11:38:35.134  7350  7350 D AndroidRuntime: Calling main entry com.android.commands.content.Content
+08-18 11:38:35.199   534   549 E NotificationService: Package has already queued 5 toasts. Not showing more. Package=com.topjohnwu.magisk
+08-18 11:38:35.216  7350  7350 D AndroidRuntime: Shutting down VM
+08-18 11:38:35.437  7371  7371 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+08-18 11:38:35.463  7371  7371 D nativeloader: Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:35.463  7371  7371 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+08-18 11:38:35.468  7371  7371 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt70l.dat
+08-18 11:38:35.470  7371  7371 D nativeloader: Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:35.471  7371  7371 D nativeloader: Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:35.473  7371  7371 W app_process: Unexpected CPU variant for x86: x86_64.
+08-18 11:38:35.473  7371  7371 W app_process: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+08-18 11:38:35.507  7356  7356 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+08-18 11:38:35.516  7356  7356 D nativeloader: Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:35.516  7356  7356 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+08-18 11:38:35.516  7356  7356 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt70l.dat
+08-18 11:38:35.517  7356  7356 D nativeloader: Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:35.518  7377  7377 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+08-18 11:38:35.520  7356  7356 D nativeloader: Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:35.522  7356  7356 W app_process: Unexpected CPU variant for x86: x86_64.
+08-18 11:38:35.522  7356  7356 W app_process: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+08-18 11:38:35.533  7377  7377 D nativeloader: Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:35.537  7377  7377 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+08-18 11:38:35.537  7377  7377 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt70l.dat
+08-18 11:38:35.539  7377  7377 D nativeloader: Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:35.540  7377  7377 D nativeloader: Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+08-18 11:38:35.541   725   732 I ndroid.systemui: Background concurrent mark compact GC freed 16MB AllocSpace bytes, 0(0B) LOS objects, 49% free, 13MB/27MB, paused 1.561ms,2.875ms total 275.268ms
+08-18 11:38:35.542   725   861 D EGL_emulation: app_time_stats: avg=237.91ms min=3.48ms max=1933.00ms count=9
+08-18 11:38:35.543  7377  7377 W app_process: Unexpected CPU variant for x86: x86_64.
+08-18 11:38:35.543  7377  7377 W app_process: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+08-18 11:38:35.556  7371  7371 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+08-18 11:38:35.557  7371  7371 D AndroidRuntime: Calling main entry com.android.commands.content.Content
+08-18 11:38:35.572  7356  7356 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+08-18 11:38:35.573  7356  7356 D AndroidRuntime: Calling main entry com.android.commands.content.Content
+08-18 11:38:35.584   534  1952 E NotificationService: Package has already queued 5 toasts. Not showing more. Package=com.topjohnwu.magisk
+08-18 11:38:35.588   534  1952 E NotificationService: Package has already queued 5 toasts. Not showing more. Package=com.topjohnwu.magisk
+08-18 11:38:35.597  7377  7377 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+08-18 11:38:35.598  7377  7377 D AndroidRuntime: Calling main entry com.android.commands.content.Content
+08-18 11:38:35.606   534  1952 E NotificationService: Package has already queued 5 toasts. Not showing more. Package=com.topjohnwu.magisk
+08-18 11:38:35.613  7356  7356 D AndroidRuntime: Shutting down VM
+08-18 11:38:35.620  7371  7371 D AndroidRuntime: Shutting down VM
+08-18 11:38:35.622  7377  7377 D AndroidRuntime: Shutting down VM
+08-18 11:38:35.760   534  1952 D CoreBackPreview: Window{4fcf2f8 u0 Toast}: Setting back callback null
+08-18 11:38:35.772   534  1952 W InputManager-JNI: Input channel object '4fcf2f8 Toast (client)' was disposed without first being removed with the input manager!
+08-18 11:38:35.801   534  1952 W NotificationService: Toast already killed. pkg=com.example.audiorecorder token=android.os.BinderProxy@98f431f
+08-18 11:38:35.862   725   861 W Parcel  : Expecting binder but got null!
+08-18 11:38:35.865   534   549 D CoreBackPreview: Window{59d4435 u0 Toast}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@feef23b, mPriority=0}
+08-18 11:38:35.885   725   861 E OpenGLRenderer: Unable to match the desired swap behavior.

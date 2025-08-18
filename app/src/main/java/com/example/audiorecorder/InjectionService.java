@@ -57,7 +57,7 @@ public class InjectionService extends Service {
 
             String targetPid = executeCommand("pidof audioserver");
             Log.d(TAG,"Pid of the audioserver process:" + targetPid);
-            String localPid = executeCommand("echo $$");
+            String localPid = executeCommand("ps -A | grep com.example.audiorecorder | awk '{print $2}'");
             Log.d(TAG,"Pid of the audioRecorder process:" + localPid);
 
             //Running injector

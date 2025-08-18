@@ -24,10 +24,10 @@
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
 
 
-//struct PhdrCallbackData {
-//    const char *lib_name;
-//    void *base_addr;
-//};
+struct PhdrCallbackData {
+    const char *lib_name;
+    void *base_addr;
+};
 static int android_os_version = -1;
 
 
@@ -43,16 +43,16 @@ int GetOSVersion() {
     return android_os_version;
 }
 
-//int find_lib_base_callback(struct dl_phdr_info *info, size_t size, void *data) {
-//    PhdrCallbackData *callback_data = (PhdrCallbackData *) data;
-//
-//    // Check if the library's name contains the name we're searching for.
-//    if (info->dlpi_name && strstr(info->dlpi_name, callback_data->lib_name)) {
-//        callback_data->base_addr = (void *) info->dlpi_addr;
-//        return 1;
-//    }
-//    return 0;
-//}
+int find_lib_base_callback(struct dl_phdr_info *info, size_t size, void *data) {
+    PhdrCallbackData *callback_data = (PhdrCallbackData *) data;
+
+    // Check if the library's name contains the name we're searching for.
+    if (info->dlpi_name && strstr(info->dlpi_name, callback_data->lib_name)) {
+        callback_data->base_addr = (void *) info->dlpi_addr;
+        return 1;
+    }
+    return 0;
+}
 
 void *get_remote_lib_address(pid_t pid, const char *lib_name) {
     char maps_path[256];
@@ -69,34 +69,34 @@ void *get_remote_lib_address(pid_t pid, const char *lib_name) {
     return nullptr;
 }
 
-void *get_local_lib_address(pid_t pid,const char *lib_name) {
-    char maps_path[256];
-    LOGD("Reading maps for pid: %d",pid);
-    snprintf(maps_path, sizeof(maps_path), "/proc/%d/maps", pid);
-
-    std::ifstream maps_file(maps_path);
-    std::string line;
-
-    while (getline(maps_file, line)) {
-        if (line.find(lib_name) != std::string::npos) {
-            return (void *) (std::stoul(line.substr(0, line.find('-')), nullptr, 16));
-        }
-    }
-    return nullptr;
-}
-
-//void *get_local_lib_address(const char *lib_name) {
-//    PhdrCallbackData data;
-//    data.lib_name = lib_name;
-//    data.base_addr = nullptr;
+//void *get_local_lib_address(pid_t pid,const char *lib_name) {
+//    char maps_path[256];
+//    LOGD("Reading maps for pid: %d",pid);
+//    snprintf(maps_path, sizeof(maps_path), "/proc/%d/maps", pid);
 //
-//    dl_iterate_phdr(find_lib_base_callback, &data);
+//    std::ifstream maps_file(maps_path);
+//    std::string line;
 //
-//    return data.base_addr;
+//    while (getline(maps_file, line)) {
+//        if (line.find(lib_name) != std::string::npos) {
+//            return (void *) (std::stoul(line.substr(0, line.find('-')), nullptr, 16));
+//        }
+//    }
+//    return nullptr;
 //}
 
+void *get_local_lib_address(const char *lib_name) {
+    PhdrCallbackData data;
+    data.lib_name = lib_name;
+    data.base_addr = nullptr;
+
+    dl_iterate_phdr(find_lib_base_callback, &data);
+
+    return data.base_addr;
+}
+
 void* get_remote_function_address(pid_t pid, pid_t local_pid,const char *lib_name, const void *local_function_addr) {
-    void *local_lib_addr = get_local_lib_address(local_pid,lib_name);
+    void *local_lib_addr = get_local_lib_address(lib_name);
     LOGD("LOCAL ADDRESS: %p", local_lib_addr);
     if (!local_lib_addr) return nullptr;
 
@@ -169,13 +169,13 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    void *handle = dlopen("/data/local/tmp/libhook.so", RTLD_NOW);
-
-    if (!handle) {
-        // **CRITICAL:** If handle is NULL, dlopen failed. Print the error.
-        LOGD("Error: Failed to load libhook.so -> %s", dlerror());
-        return 1; // Exit with an error code
-    }
+//    void *handle = dlopen("/data/local/tmp/libhook.so", RTLD_NOW);
+//
+//    if (!handle) {
+//        // **CRITICAL:** If handle is NULL, dlopen failed. Print the error.
+//        LOGD("Error: Failed to load libhook.so -> %s", dlerror());
+//        return 1; // Exit with an error code
+//    }
 
     LOGD("Local address of dlopen- > %p",(void*)dlopen);
 
@@ -240,6 +240,36 @@ int main(int argc, char **argv) {
     void *dlopen_ret = (void *) execute_remote_function(target_process_pid, remote_dlopen_addr,
                                                         dlopen_params, 2, &temp_regs);
     LOGD("Dlopen return-> %p", dlopen_ret);
+
+    void *remote_dlerror_addr = get_remote_function_address(target_process_pid, local_process_pid, libDlPath.c_str(), (void *)dlerror);
+    if (!remote_dlerror_addr) {
+        LOGD("Error: Could not find the dlerror address!!");
+        ptrace(PTRACE_DETACH, target_process_pid, NULL, NULL);
+        return -1;
+    }
+    LOGD("Remote dlerror address: %p", remote_dlerror_addr);
+
+// Call dlerror remotely (no parameters)
+    long dlerror_ret = execute_remote_function(target_process_pid, remote_dlerror_addr, nullptr, 0, &temp_regs);
+    LOGD("dlerror return pointer: 0x%lx", dlerror_ret);
+
+    if (dlerror_ret == 0) {
+        LOGD("No dlerror message.");
+    } else {
+        // Read the error string from the remote process memory
+        char error_str[256] = {0};
+        unsigned long addr = (unsigned long)dlerror_ret;
+        for (int i = 0; i < (int)sizeof(error_str) - 1; ++i) {
+            long val = ptrace(PTRACE_PEEKDATA, target_process_pid, addr + i, NULL);
+            if (val == -1 && errno != 0) {
+                LOGD("Failed to read memory at %lx", addr + i);
+                break;
+            }
+            error_str[i] = val & 0xFF;
+            if (error_str[i] == '\0') break;
+        }
+        LOGD("dlerror message from remote process: %s", error_str);
+    }
     if (!dlopen_ret) {
         LOGD("Error: dlopen failed..");
     } else {
@@ -275,6 +305,8 @@ int main(int argc, char **argv) {
 //            }
 //        }
 //    }
+
+//    sleep(30);
 
     ptrace(PTRACE_SETREGS, target_process_pid, NULL, &original_regs);
     ptrace(PTRACE_DETACH, target_process_pid, NULL, NULL);

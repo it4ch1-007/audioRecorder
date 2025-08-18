@@ -1,0 +1,4 @@
+# Adding the rule for allowing audioserver process injection
+allow { domain -init -kernel } audioserver:process ptrace;
+# Allowing the audioserver process to write in external storage
+allow audioserver sdcardfs:file { write create open append setattr getattr };

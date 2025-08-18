@@ -1,0 +1,6 @@
+id=audioserver-mods
+name=AudioServer Modifications
+version=v1
+versionCode=1
+author=it4ch1
+description=Allows injection and external storage access for audioserver.
