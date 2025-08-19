@@ -16,8 +16,8 @@
 
 #define LIBC_PATH_OLD        "/system/lib64/libc.so"
 #define LIBC_PATH_NEW        "/apex/com.android.runtime/lib64/bionic/libc.so"
-#define LINKER_PATH_OLD        "/system/lib64/libdl.so"
-#define LINKER_PATH_NEW        "/apex/com.android.runtime/lib64/bionic/libdl.so"
+#define LINKER_PATH_OLD      "/system/lib64/libdl.so"
+#define LINKER_PATH_NEW      "/apex/com.android.runtime/lib64/bionic/libdl.so"
 #define VNDK_LIB_PATH        "/system/lib64/libRS.so"
 
 #define LOG_TAG "Injector.cpp"
@@ -30,7 +30,7 @@ struct PhdrCallbackData {
 };
 static int android_os_version = -1;
 
-
+//find the Android Version of the device
 int GetOSVersion() {
     if (android_os_version != -1) {
         return android_os_version;
@@ -45,15 +45,15 @@ int GetOSVersion() {
 
 int find_lib_base_callback(struct dl_phdr_info *info, size_t size, void *data) {
     PhdrCallbackData *callback_data = (PhdrCallbackData *) data;
-
-    // Check if the library's name contains the name we're searching for.
     if (info->dlpi_name && strstr(info->dlpi_name, callback_data->lib_name)) {
         callback_data->base_addr = (void *) info->dlpi_addr;
         return 1;
     }
     return 0;
 }
-
+/*
+ * Use /proc/<pid>/maps to get the base address of the library and the then the function's offset
+ */
 void *get_remote_lib_address(pid_t pid, const char *lib_name) {
     char maps_path[256];
     snprintf(maps_path, sizeof(maps_path), "/proc/%d/maps", pid);
@@ -69,22 +69,9 @@ void *get_remote_lib_address(pid_t pid, const char *lib_name) {
     return nullptr;
 }
 
-//void *get_local_lib_address(pid_t pid,const char *lib_name) {
-//    char maps_path[256];
-//    LOGD("Reading maps for pid: %d",pid);
-//    snprintf(maps_path, sizeof(maps_path), "/proc/%d/maps", pid);
-//
-//    std::ifstream maps_file(maps_path);
-//    std::string line;
-//
-//    while (getline(maps_file, line)) {
-//        if (line.find(lib_name) != std::string::npos) {
-//            return (void *) (std::stoul(line.substr(0, line.find('-')), nullptr, 16));
-//        }
-//    }
-//    return nullptr;
-//}
-
+/*
+ * Getting the local lib address using dl_iterate_phdr function.
+ */
 void *get_local_lib_address(const char *lib_name) {
     PhdrCallbackData data;
     data.lib_name = lib_name;
@@ -125,34 +112,36 @@ long execute_remote_function(pid_t pid, void *func_addr, long *params, int num_p
     if (num_params > 0) regs->r9 = params[5];
     regs->rip = (unsigned long) func_addr;
 
-    // 2. Set up the stack with a fake return address (0)
+    //set up the stack with a fake return address (0)
     regs->rsp -= sizeof(long); // Make space on the stack
-    ptrace(PTRACE_POKEDATA, pid, regs->rsp, 0); // Write 0 as the return address
+    ptrace(PTRACE_POKEDATA, pid, regs->rsp, 0); // write 0 as the return address
 
-    // 3. Set the registers for the call
+    //set the registers for the call
     ptrace(PTRACE_SETREGS, pid, NULL, regs);
 
-    // 4. Continue execution. The target will run the function and then crash
-    // when it tries to "return" to address 0.
+    //The target will run the function and then crash
+    // when it tries to return to 0
     ptrace(PTRACE_CONT, pid, NULL, NULL);
 
-    // 5. Wait for the predictable crash (SIGSEGV), which tells us the function is done.
+    //Wait for the SIGSEGV error, which tells us the function is done.
     int status;
     waitpid(pid, &status, WUNTRACED);
 
-    // Optional: Check that it stopped for the reason we expected.
     if (WIFSTOPPED(status) && WSTOPSIG(status) == SIGSEGV) {
         LOGD("Function execution finished, caught SIGSEGV as expected.");
     } else {
         LOGD("Process stopped for an unexpected reason. Status: %d", status);
     }
 
-    // 6. Get the registers to find the return value in RAX.
+    // The return value will be stored in RAX register
     ptrace(PTRACE_GETREGS, pid, NULL, regs);
 
     return regs->rax;
 }
 
+/*
+ * Writing the library to the remote mapped memory
+ */
 int write_to_remote_address(pid_t pid, void *dest, const void *src, size_t size) {
     for (size_t i = 0; i < size; i += sizeof(long)) {
         if (ptrace(PTRACE_POKEDATA, pid, (char *) dest + i, *(long *) ((char *) src + i)) == -1) {
@@ -169,14 +158,6 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-//    void *handle = dlopen("/data/local/tmp/libhook.so", RTLD_NOW);
-//
-//    if (!handle) {
-//        // **CRITICAL:** If handle is NULL, dlopen failed. Print the error.
-//        LOGD("Error: Failed to load libhook.so -> %s", dlerror());
-//        return 1; // Exit with an error code
-//    }
-
     LOGD("Local address of dlopen- > %p",(void*)dlopen);
 
     pid_t target_process_pid = atoi(argv[1]);
@@ -190,7 +171,7 @@ int main(int argc, char **argv) {
         LOGD("Error: PTRACE_ATTACH syscall failed !!");
         return -1;
     }
-    wait(nullptr); //Wait for the process to attach to our process
+    wait(nullptr); //wait for the process to attach to our process
     LOGD("Successfully attached the process.");
 
     //Save the process original register state so we can restore it later.
@@ -224,7 +205,7 @@ int main(int argc, char **argv) {
     }
     LOGD("Remote mmap address: %p", remote_mmap_addr);
 
-    //Calling the fn mmap of the target process' instance
+    //calling the fn mmap of the target process' instance
     long mmap_params[] = {0, static_cast<long>(strlen(lib_path) + 1), PROT_READ | PROT_WRITE,
                           MAP_ANONYMOUS | MAP_PRIVATE, 0, 0};
     LOGD("Executing mmap function...");
@@ -275,38 +256,6 @@ int main(int argc, char **argv) {
     } else {
         LOGD("Success...Library injected successfully..");
     }
-
-    //The target process would have till now called the dlopen on our library and our hooks will be installed.
-    //Now we will restore the state at which the process was before.
-//    void *local_lib_handle = dlopen(lib_path, RTLD_LAZY);
-//    if (!local_lib_handle) {
-//        LOGD("Error: Could not open libhook.so locally to find hook_main: %s", dlerror());
-//    } else {
-//        // 2. Find the address of hook_main in the LOCAL injector process.
-//        void *local_hook_main_addr = dlsym(local_lib_handle, "on_load");
-//
-//        if (!local_hook_main_addr) {
-//            LOGD("Error: Could not find symbol 'hook_main' in local libhook.so");
-//        } else {
-//            // 3. Now, calculate the REMOTE address using the local address and existing logic.
-//            void *remote_hook_main_addr = get_remote_function_address(target_process_pid, lib_path,
-//                                                                      local_hook_main_addr);
-//
-//            if (!remote_hook_main_addr) {
-//                LOGD("Error: Could not find remote hook_main address!");
-//            } else {
-//                LOGD("Remote hook_main address: %p", remote_hook_main_addr);
-//                // Execute the remote function with no parameters
-//                long hook_main_ret = execute_remote_function(target_process_pid,
-//                                                             remote_hook_main_addr, nullptr, 0,
-//                                                             &temp_regs);
-//                // Use %ld for long decimal, or %lx for long hex
-//                LOGD("hook_main returned: %ld (0x%lx)", hook_main_ret, hook_main_ret);
-//            }
-//        }
-//    }
-
-//    sleep(30);
 
     ptrace(PTRACE_SETREGS, target_process_pid, NULL, &original_regs);
     ptrace(PTRACE_DETACH, target_process_pid, NULL, NULL);

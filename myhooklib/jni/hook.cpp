@@ -1,79 +1,74 @@
+#include <iostream>
 #include <android/log.h>
-#include <link.h>
-#include <string.h>
 #include <fstream>
-#include <unistd.h> 
-#include <dlfcn.h>
+#include <string>
+#include <vector>
+#include <optional>
+#include <cstdint>
+#include "elfio.hpp"
 
 #define LOG_TAG "NativeHook"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 
-typedef enum {
-    AUDIO_MODE_NORMAL             = 0,
-    AUDIO_MODE_RINGTONE           = 1,
-    AUDIO_MODE_IN_CALL            = 2,
-    AUDIO_MODE_IN_COMMUNICATION   = 3,
-    AUDIO_MODE_CALL_SCREEN        = 4,
-} audio_mode_t;
-
-void* original_setMode = nullptr;
-void replaced_setMode(void* this_ptr,audio_mode_t mode) {
-    LOGI("[HOOK] AudioFlinger::setMode called!");
-    LOGI("State of mode of communication: %d",mode);
-    ((void (*)(void*, audio_mode_t))original_setMode)(this_ptr, mode);
-}
-struct PhdrCallbackData {
-    const char* lib_name;
-    void* base_addr;
-};
-
-int find_lib_base_callback(struct dl_phdr_info* info, size_t size, void* data) {
-    PhdrCallbackData* callback_data = (PhdrCallbackData*)data;
-    if (info->dlpi_name && strstr(info->dlpi_name, callback_data->lib_name)) {
-        callback_data->base_addr = (void*)info->dlpi_addr;
-        return 1; // Return 1 to stop iterating once found.
+using namespace ELFIO;
+std::optional<uint64_t> find_got_symbol(const std::string& path,const std::string& symbol_name){
+    elfio reader;
+    if(!reader.load(path)){
+        return std::nullopt;
     }
-    return 0;
+
+    //Finding the dynamic symbol table
+    const symbol_section_accessor* dynsym = nullptr;
+    const string_section_accessor* dynstr = nullptr;
+
+    for(const auto& sec: reader.sections){
+        if(sec->get_type() ==SHT_DYNSYM){
+            dynsym = new symbol_section_accessor(reader,sec);
+            const section* str_sec = reader.sections[sec->get_link()];
+            dynstr = new string_section_accessor(reader,str_sec);
+            break;
+        }
+    }
+
+    //If both are null
+    if(!dynsym || !dynstr){
+        delete dynsym;
+        delete dynstr;
+        return std::nullopt;
+    }
+
+
+    //Now we will iterate over relocation sections
+    for(const auto& sec: reader.sections){
+        if(sec->get_type()!= SHT_REL && sec->get_type()!=SHT_RELA){
+            continue;
+        }
+
+        relocation_section_accessor relocs(reader,sec);
+        Elf_Xword rel_count = relocs.get_entries_num();
+
+        for(Elf_Xword i=0;i<rel_count;++i){
+            Elf64_Addr offset;
+            Elf_Word symbol_idx;
+            Elf_Word type;
+            Elf_Sxword addend;
+
+            if(!relocs.get_entry(i,pffset,symbol_idx,type,addend)){
+                continue;
+            }
+
+            //Getting the symbol name
+            std::string current_symbol_name;
+        }
+    }
 }
-
-// extern "C" int hook_main() {
-//     LOGI("SUCCESS! hook_main() was executed inside audioserver!");
-
-//     // Find the base address of libaudioflinger.so in memory.
-//     PhdrCallbackData data = {"libaudioflinger.so", nullptr};
-//     dl_iterate_phdr(find_lib_base_callback, &data);
-    
-//     if (data.base_addr == nullptr) {
-//         LOGI("[ERROR] Could not find base address of libaudioflinger.so");
-//         return -1;
-//     }
-//     LOGI("Found libaudioflinger.so base address at: %p", data.base_addr);
-//     long setModeOffset = 0x4DE40; 
-
-//     void* target_address = (void*)((long)data.base_addr + setModeOffset);
-//     LOGI("Calculated setMode address at: %p", target_address);
-//     int result = DobbyHook(
-//         target_address,              // Address of the function to hook
-//         (void*)replaced_setMode, // Address of our replacement function
-//         &original_setMode        // Address of the pointer to store the original function
-//     );
-
-//     if (result == 0) {
-//         LOGI("DobbyHook for createTrack installed successfully!");
-//     } else {
-//         LOGI("[ERROR] DobbyHook failed with code: %d", result);
-//         return -1;
-//     }
-
-//     return 4040;
-// }
 
 // Constructor that runs when the library is first loaded.
 __attribute__((constructor))
 void on_load() {
     LOGI("libhook.so loaded successfully and on_load() was called!");
     std::ofstream ofs("/data/local/tmp/hookconfirm.txt");
-    ofs << "Loaded! PID=" << getpid() << std::endl;
+    ofs << "Loaded!" << std::endl;
     ofs.close();
     // hook_main();
 }
