@@ -5,7 +5,6 @@
 #include <vector>
 #include <optional>
 #include <cstdint>
-#include "elfio.hpp"
 
 #define LOG_TAG "NativeHook"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)

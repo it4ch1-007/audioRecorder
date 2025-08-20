@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <regex>
 #include <string>
 #include <vector>
@@ -51,6 +52,7 @@ int find_lib_base_callback(struct dl_phdr_info *info, size_t size, void *data) {
     }
     return 0;
 }
+
 /*
  * Use /proc/<pid>/maps to get the base address of the library and the then the function's offset
  */
@@ -82,7 +84,8 @@ void *get_local_lib_address(const char *lib_name) {
     return data.base_addr;
 }
 
-void* get_remote_function_address(pid_t pid, pid_t local_pid,const char *lib_name, const void *local_function_addr) {
+void *get_remote_function_address(pid_t pid, pid_t local_pid, const char *lib_name,
+                                  const void *local_function_addr) {
     void *local_lib_addr = get_local_lib_address(lib_name);
     LOGD("LOCAL ADDRESS: %p", local_lib_addr);
     if (!local_lib_addr) return nullptr;
@@ -152,13 +155,50 @@ int write_to_remote_address(pid_t pid, void *dest, const void *src, size_t size)
     return 0;
 }
 
+/*
+ * Helper functions for selinux disabling
+ */
+bool isSelinuxDisabled() {
+    std::ifstream fileSystems("/proc/filesystems");
+    if (!fileSystems)
+        return true;
+    std::string line;
+    while (getline(fileSystems, line)) {
+        if (line.find("selinuxfs") != std::string::npos) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void disableSelinux() {
+    std::ifstream procMounts("/proc/mounts");
+    if (!procMounts)
+        return;
+    std::string line;
+    while (getline(procMounts, line)) {
+        if (line.find("selinuxfs") != std::string::npos) {
+            std::stringstream ss(line);
+            std::string token;
+            std::vector<std::string> tokens;
+            while (ss >> token) {
+                tokens.push_back(token);
+            }
+            std::string mountPath = tokens[1] + "/enforce";
+            std::ofstream enforceFile(mountPath, std::ofstream::out);
+            enforceFile << "0";
+            enforceFile.close();
+        }
+    }
+}
+
 int main(int argc, char **argv) {
     if (argc < 4) {
         LOGD("Usage: injector <pidRemote> <lib_path> <pidLocal>");
         return -1;
     }
 
-    LOGD("Local address of dlopen- > %p",(void*)dlopen);
+    LOGD("Local address of dlopen- > %p", (void *) dlopen);
 
     pid_t target_process_pid = atoi(argv[1]);
     pid_t local_process_pid = atoi(argv[3]);
@@ -186,7 +226,8 @@ int main(int argc, char **argv) {
         libDlPath = LINKER_PATH_NEW;
         libCPath = LIBC_PATH_NEW;
     }
-    void *remote_dlopen_addr = get_remote_function_address(target_process_pid,local_process_pid, libDlPath.c_str(),
+    void *remote_dlopen_addr = get_remote_function_address(target_process_pid, local_process_pid,
+                                                           libDlPath.c_str(),
                                                            (void *) dlopen);
     if (!remote_dlopen_addr) {
         LOGD("Error: Could not find the dlopen address!!");
@@ -196,7 +237,8 @@ int main(int argc, char **argv) {
     LOGD("Remote dlopen address: %p", remote_dlopen_addr);
 
     //Now we will do the same thing with the mmap fn
-    void *remote_mmap_addr = get_remote_function_address(target_process_pid,local_process_pid, libCPath.c_str(),
+    void *remote_mmap_addr = get_remote_function_address(target_process_pid, local_process_pid,
+                                                         libCPath.c_str(),
                                                          (void *) mmap);
     if (!remote_mmap_addr) {
         LOGD("Error: Could not find remote mmap address");
@@ -211,7 +253,7 @@ int main(int argc, char **argv) {
     LOGD("Executing mmap function...");
     void *remote_path_addr = (void *) execute_remote_function(target_process_pid, remote_mmap_addr,
                                                               mmap_params, 6, &temp_regs);
-    LOGD("Executed mmap function successfully...: %p",remote_path_addr);
+    LOGD("Executed mmap function successfully...: %p", remote_path_addr);
     //writing the library path inside the target process' memory
     write_to_remote_address(target_process_pid, remote_path_addr, lib_path, strlen(lib_path) + 1);
     LOGD("Written the hooking library path to remote process' memory...");
@@ -222,7 +264,8 @@ int main(int argc, char **argv) {
                                                         dlopen_params, 2, &temp_regs);
     LOGD("Dlopen return-> %p", dlopen_ret);
 
-    void *remote_dlerror_addr = get_remote_function_address(target_process_pid, local_process_pid, libDlPath.c_str(), (void *)dlerror);
+    void *remote_dlerror_addr = get_remote_function_address(target_process_pid, local_process_pid,
+                                                            libDlPath.c_str(), (void *) dlerror);
     if (!remote_dlerror_addr) {
         LOGD("Error: Could not find the dlerror address!!");
         ptrace(PTRACE_DETACH, target_process_pid, NULL, NULL);
@@ -231,7 +274,8 @@ int main(int argc, char **argv) {
     LOGD("Remote dlerror address: %p", remote_dlerror_addr);
 
 // Call dlerror remotely (no parameters)
-    long dlerror_ret = execute_remote_function(target_process_pid, remote_dlerror_addr, nullptr, 0, &temp_regs);
+    long dlerror_ret = execute_remote_function(target_process_pid, remote_dlerror_addr, nullptr, 0,
+                                               &temp_regs);
     LOGD("dlerror return pointer: 0x%lx", dlerror_ret);
 
     if (dlerror_ret == 0) {
@@ -239,8 +283,8 @@ int main(int argc, char **argv) {
     } else {
         // Read the error string from the remote process memory
         char error_str[256] = {0};
-        unsigned long addr = (unsigned long)dlerror_ret;
-        for (int i = 0; i < (int)sizeof(error_str) - 1; ++i) {
+        unsigned long addr = (unsigned long) dlerror_ret;
+        for (int i = 0; i < (int) sizeof(error_str) - 1; ++i) {
             long val = ptrace(PTRACE_PEEKDATA, target_process_pid, addr + i, NULL);
             if (val == -1 && errno != 0) {
                 LOGD("Failed to read memory at %lx", addr + i);
