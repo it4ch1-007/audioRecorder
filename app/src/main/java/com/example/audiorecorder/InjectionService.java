@@ -45,14 +45,30 @@ public class InjectionService extends Service {
         new Thread(() -> {
             Log.d(TAG, "Root shell acquired. Executing command...");
 
-            //Turning SELinux off
-            Log.d(TAG,"Bypassing SELinux....");
-            String selinuxStatus = executeCommand("getenforce");
-            if(selinuxStatus!="0"){
-                executeCommand("setenforce 0");
-            }
+            /////Turning SELinux off
+//            Log.d(TAG,"Bypassing SELinux....");
+//            String selinuxStatus = executeCommand("getenforce");
+//            if(selinuxStatus!="0"){
+//                executeCommand("setenforce 0");
+//            }
 
             ////Making the process audioserver able to write into the sdcard directory.
+
+            String bypassCommands = "supolicy --live \"allow audioserver sdcard_type file { create read write open unlink }\"\n" +
+                    "supolicy --live \"allow audioserver sdcard_type dir { search read write add_name remove_name }\"\n" +
+                    "supolicy --live \"allow audioserver fuse file { create read write open unlink }\"\n" +
+                    "supolicy --live \"allow audioserver fuse dir { search read write add_name remove_name }\n"+
+                    "supolicy --live \"allow audioserver storage_file file { create read write open unlink }\"\n" +
+                    "supolicy --live \"allow audioserver storage_file dir { search read write add_name remove_name }\"\n";
+            executeCommand(bypassCommands);
+//            Log.d(TAG,"Modifying SELinux rules ->" + result);
+
+
+            ////Allowing any process to inject into audioserver
+            String allowInjectCommand = "supolicy --live \"allow domain audioserver:process { ptrace signal getsched execmem }\"\n" +
+                    "supolicy --live \"allow domain audioserver:fd use\"\n" +
+                    "supolicy --live \"allow audioserver app_data_file:file { read open execute }\"";
+            executeCommand(allowInjectCommand);
 
 
             String targetPid = executeCommand("pidof audioserver");

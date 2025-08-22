@@ -1,73 +1,58 @@
 #include <iostream>
-#include <android/log.h>
+// #include <android/log.h>
+#include "file_utils.h"
 #include <fstream>
 #include <string>
 #include <vector>
 #include <optional>
 #include <cstdint>
 
+typedef int32_t status_t;
+
 #define LOG_TAG "NativeHook"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 
-using namespace ELFIO;
-std::optional<uint64_t> find_got_symbol(const std::string& path,const std::string& symbol_name){
-    elfio reader;
-    if(!reader.load(path)){
-        return std::nullopt;
-    }
+bool is_mode_enabled = false;
+std::vector<std::byte> received_packets, sent_packets;
 
-    //Finding the dynamic symbol table
-    const symbol_section_accessor* dynsym = nullptr;
-    const string_section_accessor* dynstr = nullptr;
+///TODO: Add hook for the setMode fn 
+///TODO: Add the fn to hook and put the pcm packets inside the data file.
+status_t newAudioFlingersetMode(void* this_,int mode){
+    if(mode==3)
+        is_mode_enabled = true;
+    status_t result = origAudioflingerSetMode(this_,mode);
+    return result;
+}
+status_t (*origAudioflingerSetMode)(void* this_ptr, int mode) = nullptr;
 
-    for(const auto& sec: reader.sections){
-        if(sec->get_type() ==SHT_DYNSYM){
-            dynsym = new symbol_section_accessor(reader,sec);
-            const section* str_sec = reader.sections[sec->get_link()];
-            dynstr = new string_section_accessor(reader,str_sec);
-            break;
-        }
-    }
-
-    //If both are null
-    if(!dynsym || !dynstr){
-        delete dynsym;
-        delete dynstr;
-        return std::nullopt;
-    }
+void write_files()
+{
+    std::ofstream received_pcm_file("/sdcard/Download/capturedPcm.dat", std::ios::binary);
+}
+void hook_main()
+{
+    // hooking the fn to get the mode value
+    const char* libraryPath = "libaudioflinger.so";
+    const char* mangledSymbol = "_ZN7android12AudioFlinger7setModeEi";
+    NativeHook::Hook(libraryPath,mangledSymbol,(void*)newAudioFlingersetMode,(void**)origAudioflingerSetMode);
 
 
-    //Now we will iterate over relocation sections
-    for(const auto& sec: reader.sections){
-        if(sec->get_type()!= SHT_REL && sec->get_type()!=SHT_RELA){
-            continue;
-        }
 
-        relocation_section_accessor relocs(reader,sec);
-        Elf_Xword rel_count = relocs.get_entries_num();
+    // hooking to get the PCM packets that are received
+    // hooking to get the PCM packets that are sent from the device to the other end.
 
-        for(Elf_Xword i=0;i<rel_count;++i){
-            Elf64_Addr offset;
-            Elf_Word symbol_idx;
-            Elf_Word type;
-            Elf_Sxword addend;
+    //This should be a offset function hooking instead of the symbol lookup function hooking
 
-            if(!relocs.get_entry(i,pffset,symbol_idx,type,addend)){
-                continue;
-            }
+    
 
-            //Getting the symbol name
-            std::string current_symbol_name;
-        }
-    }
 }
 
 // Constructor that runs when the library is first loaded.
-__attribute__((constructor))
-void on_load() {
-    LOGI("libhook.so loaded successfully and on_load() was called!");
+__attribute__((constructor)) void on_load()
+{
+    // LOGI("libhook.so loaded successfully and on_load() was called!");
     std::ofstream ofs("/data/local/tmp/hookconfirm.txt");
     ofs << "Loaded!" << std::endl;
     ofs.close();
-    // hook_main();
+    hook_main();
 }

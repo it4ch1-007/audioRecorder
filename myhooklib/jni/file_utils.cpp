@@ -1,26 +1,28 @@
 #include <fcntl.h>
 #include <malloc.h>
 #include <sys/mman.h>
-#include <android/log.h>
+// #include <android/log.h>
+#include <string.h>
 #include <sys/stat.h>
-#include <file_utils.h>
+#include "file_utils.h"
 #include <unistd.h>
 
 #define LOG_TAG "NativeHook"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
 
 using namespace NativeHook;
+///TODO: Add the fn to set the hooks for the functions using the fn symbols as well as the fn offsets.
 
 template <typename T>
 inline constexpr auto offsetOf(ElfW(Ehdr) * head, ElfW(Off) off)
 {
-    return reinterpret_cast<std::conditional_t<std::is_pointer_c<T>, T, T *>>(reinterpret_cast<uintptr_t>(head) + off);
+    return reinterpret_cast<std::conditional_t<std::is_pointer_v<T>, T, T *>>(reinterpret_cast<uintptr_t>(head) + off);
 }
 
 // constructor for handling files
 FileImg::FileImg(std::string_view base_name) : file(base_name)
 {
-    if (!findModuleBase())
+    if (!findBaseAddr())
     {
         base = nullptr;
         return;
@@ -36,7 +38,7 @@ FileImg::FileImg(std::string_view base_name) : file(base_name)
     if (size <= 0)
     {
         // lseek failed...
-        LOGD("Lseek failed...");
+        // LOGD("Lseek failed...");
     }
 
     file_header = reinterpret_cast<decltype(file_header)>(mmap(nullptr, size, PROT_READ, MAP_SHARED, fd, 0));
@@ -44,7 +46,7 @@ FileImg::FileImg(std::string_view base_name) : file(base_name)
     section_header = offsetOf<decltype(section_header)>(file_header, file_header->e_shoff);
 
     auto shoff = reinterpret_cast<uintptr_t>(section_header);
-    char *section_str = offsetOf<char *>(file_header, section_header[file_heaader->e_shstrndx].sh_offset);
+    char *section_str = offsetOf<char *>(file_header, section_header[file_header->e_shstrndx].sh_offset);
 
     // iterate over the section  header entries
     for (int i = 0; i < file_header->e_shnum; i++, shoff += file_header->e_shentsize)
@@ -105,7 +107,7 @@ FileImg::FileImg(std::string_view base_name) : file(base_name)
         }
         case SHT_HASH:
         {
-            auto *d_un = offsetOf<ElfW(Word)>(file_header, section_h->sh_offset);
+            ElfW(Word) *d_un = offsetOf<ElfW(Word)>(file_header, section_h->sh_offset);
             nbucket_ = d_un[0];
             bucket_ = d_un + 2;
             chain_ = bucket_ + nbucket_;
@@ -115,10 +117,10 @@ FileImg::FileImg(std::string_view base_name) : file(base_name)
         {
             auto *d_buf = reinterpret_cast<ElfW(Word) *>(((size_t)file_header) + section_h->sh_offset);
             gnu_nbucket_ = d_buf[0];
-            gnu_synndx_ = d_buf[1];
+            gnu_symndx_ = d_buf[1];
             gnu_bloom_size_ = d_buf[2];
             gnu_shift_ = d_buf[3];
-            gnu_bloom_filter = reinterpret_cast<decltype(gnu_bloom_filter_)>(d_buf + 4);
+            gnu_bloom_filter_ = reinterpret_cast<decltype(gnu_bloom_filter_)>(d_buf + 4);
             gnu_bucket_ = reinterpret_cast<decltype(gnu_bucket_)>(gnu_bloom_filter_ + gnu_bloom_size_);
             gnu_chain_ = gnu_bucket_ + gnu_nbucket_ - gnu_symndx_;
             break;
@@ -149,7 +151,7 @@ ElfW(Addr) FileImg::ElfLookup(std::string_view name, uint32_t hash) const
 // GnuLookup hash method
 ElfW(Addr) FileImg::GnuLookup(std::string_view name, uint32_t hash) const
 {
-    static constexpr auto bloom_mask_bits = sizeof(Elfw(Addr)) * 8;
+    static constexpr auto bloom_mask_bits = sizeof(ElfW(Addr)) * 8;
     if (gnu_bucket_ == 0 || gnu_bloom_size_ == 0)
         return 0;
 
@@ -187,7 +189,7 @@ ElfW(Addr) FileImg::LinearLookup(std::string_view name) const
                 const char *st_name = offsetOf<const char *>(file_header, symstr_offset_for_symtab + symtab_start[i].st_name);
                 if ((st_type == STT_FUNC || st_type == STT_OBJECT) && symtab_start[i].st_size)
                 {
-                    symtabs_.emplace(st_bane, &symtab_start[i]);
+                    symtabs_.emplace(st_name, &symtab_start[i]);
                 }
             }
         }
@@ -208,8 +210,8 @@ std::string_view FileImg::LinearLookupByPrefix(std::string_view name) const
 {
     if (symtabs_.empty())
     {
-        symtabs_.reserver(symtab_count);
-        if (symtab_start != nullptr && symsr_offset_for_symtab != 0)
+        symtabs_.reserve(symtab_count);
+        if (symtab_start != nullptr && symstr_offset_for_symtab != 0)
         {
             for (ElfW(Off) i = 0; i < symtab_count; i++)
             {
@@ -217,7 +219,7 @@ std::string_view FileImg::LinearLookupByPrefix(std::string_view name) const
                 const char *st_name = offsetOf<const char *>(file_header, symstr_offset_for_symtab + symtab_start[i].st_name);
                 if ((st_type == STT_FUNC || st_type == STT_OBJECT) && symtab_start[i].st_size)
                 {
-                    symtabs_.emplace(st_name, &symtabs_start[i]);
+                    symtabs_.emplace(st_name, &symtab_start[i]);
                 }
             }
         }
@@ -230,15 +232,15 @@ std::string_view FileImg::LinearLookupByPrefix(std::string_view name) const
             continue;
         if (symtab.first.substr(0, size) == name)
         {
-            return syntab.first;
+            return symtab.first;
         }
     }
 
-    return ""
+    return "";
 }
 
 // destructor
-FileImg::!FileImg()
+FileImg::~FileImg()
 {
     if (buffer)
     {
@@ -284,10 +286,10 @@ bool FileImg::findBaseAddr()
             {
                 return 0;
             }
-            auto *self = reinterpret_cast<ElfImg *>(data);
+            auto *self = reinterpret_cast<FileImg *>(data);
             if (strstr(info->dlpi_name, self->file.data()))
             {
-                self->elf = info->dlpi_name;
+                self->file = info->dlpi_name;
                 self->base = reinterpret_cast<void *>(info->dlpi_addr);
                 return 1;
             }
