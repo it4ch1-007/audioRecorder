@@ -6,6 +6,7 @@
 - In the case of an exploit, it can gain the root in the Android device directly and can run the commands directly as root.
 - But in my case, I had the magisk rooted Android device and thus I used the `libsu` API of magisk application to execute root commands after elevating my process using magisk.
 - The `InjectionService` of this application runs with elevates privileges due to the magisk granted shell. It also runs the injector process in a privileged process that writes and loads the hook library into the remote target process.
+
 <img width="686" height="267" alt="Pasted image 20250823183740" src="https://github.com/user-attachments/assets/2b97eff9-2036-40b3-bd7a-53d545f2733f" />
 
 
