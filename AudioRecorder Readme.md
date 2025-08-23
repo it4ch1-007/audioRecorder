@@ -41,24 +41,31 @@ The project was successfully tested on Android 14 x86_64 emulator of Pixel 6 in 
 	- This is done by hooking the `AudioFlinger::setMode()` function inside the libaudioflinger.so library.
 	- We will use the symbol associated with the function `_ZN7android12AudioFlinger7setModeEi` to hook the function.
 	- The mode value is passed as an argument to this function and so we can capture it simply by hooking the function and obtaining its arguments.
-![[Pasted image 20250823182914.png]]
+<img width="1958" height="967" alt="Pasted image 20250823182914" src="https://github.com/user-attachments/assets/0c2b66a8-247a-432e-ad66-753c82d1f4c5" />
+
 - Second thing is to get the value of PCM packets from the buffers inside the Threads.cpp
 	- This is done by hooking the `PlaybackThread::threadLoop_write()` function inside `Threads.cpp` inside the AOSP code and can be found inside the `libaudioflinger.so` library using the `mOutput->write()` method hooking. This method contains the buffer having the PCM packets data as its first argument so this can be used to dump their data. 
 	- This was done after dynamic debugging of the `libaudioflinger.so` library and the obtained results showed that the PCM packets were being passed to this hooked function and this was used to write the buffer to the HAL `Hardware Abstraction Layer`. Before this could happen we dumped the PCM packets inside the external storage directory. 
-	![[Pasted image 20250823182426.png]]
-	![[Pasted image 20250823183056.png]]
-![[Pasted image 20250823183523.png]]
+	<img width="1646" height="1048" alt="Pasted image 20250823182426" src="https://github.com/user-attachments/assets/5a8c769c-8d2b-415a-b3ff-9f9a642d861b" />
+
+	<img width="1958" height="967" alt="Pasted image 20250823183056" src="https://github.com/user-attachments/assets/39f77c21-8820-4a74-bb7f-69341a40faf3" />
+
+<img width="1958" height="967" alt="Pasted image 20250823183523" src="https://github.com/user-attachments/assets/e9f7af6c-fdac-4937-ba26-1af841076f61" />
+
 ### Running the POC code
 - There are two files `Injector.cpp` and `hook.cpp` that have to be compiled using the bash script `compile.sh`. The Android ndk toolchains path and the adb must be in the path of the shell for this to work.
-![[Pasted image 20250823182659.png]]
+<img width="363" height="788" alt="Pasted image 20250823182659" src="https://github.com/user-attachments/assets/9dd997b3-a0ad-4818-a729-15418e76d7af" />
+
 - This script basically compiles the `injector` and `libhook.so` outside the Android studio giving us more control over the binaries and their paths inside the Android device.
 	- Build the audioRecorder app and start the `InjectionService` using the `Start Service` button on the MainActivity of the app. 
 - Make a call to test the working of the poc code and obtain the file named `capturedPcm.dat` that will have all the data of the PCM packets. 
 ### Challenges encountered
 - The first challenge was to execute commands silently. This was accomplished using the libSu api of Magisk but it was unable to recognise my Application as an app that is demanding root and was not showing it on the UI. So I spent a lot of time debugging and trying to identify the root problem. But ultimately I found out that the UI just passes the application's internal database `magisk.db` . Thus I pulled out the database itself and modified it using `sqlite3` and gained root silently for every command I execute using the application.
-![[Pasted image 20250823182808.png]]
+<img width="355" height="721" alt="Pasted image 20250823182808" src="https://github.com/user-attachments/assets/8b37e24c-8d13-49e8-b576-60ede8bd8972" />
+
 - The second challenge was configuring Android studio to use Dobby or some other frameworks for hooking. I guess it would be much easier to use these already made frameworks for hooking but I wanted to experiment more with my custom inline hooking framework I wrote during my previous project on zygisk detection , so I went through with my inline hook and modified it best to my use.
-![[Pasted image 20250823182738.png]]
+<img width="1372" height="1166" alt="Pasted image 20250823182738" src="https://github.com/user-attachments/assets/50972847-e82f-40d4-83f5-24c3140ed51b" />
+
 
 - The main challenge I faced in this was identifying the function to capture the buffers that will contain the pcm packets. To find some functions regarding this, I reverse engineered the AOSP code files responsible for the handling of PCM packets buffers  inside the `libaudioflinger.so`  library. This gave me a basic idea of which functions are actually responsible for the buffer handling. Then to get an advanced idea of how these buffers are handled step by step, I debugged the `libaudioflinger.so` library using dynamic Android debugger of IDA Pro. I identified some general functions like `memcpy,read and others` were used inside the `Threads.cpp` program code and they can be hooked to get the control of those buffers.
 
