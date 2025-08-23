@@ -1,7 +1,7 @@
 ## Description of Design
 **It is configured for x86_64 architectures Android devices for now.**
 
-1.**POC Application**
+1. **POC Application**
 - This is the Android application that spawns a service in the background for a short-time interval bypassing the need of a notification to launch a service added to Android (>8.0).
 - In the case of an exploit, it can gain the root in the Android device directly and can run the commands directly as root.
 - But in my case, I had the magisk rooted Android device and thus I used the `libsu` API of magisk application to execute root commands after elevating my process using magisk.
@@ -10,13 +10,13 @@
 <img width="686" height="267" alt="Pasted image 20250823183740" src="https://github.com/user-attachments/assets/2b97eff9-2036-40b3-bd7a-53d545f2733f" />
 
 
-2.**Injector** (Inside the main **app** directory as injector.cpp)
+2. **Injector** (Inside the main **app** directory as injector.cpp)
 - The injector binary is designed exclusively for x86_64 architecture Android devices. It injects any shared object native library inside any process using the pid of the target process.
 - It uses `ptrace` syscall to stop the target process in its state and modify the registers of the process in order to call the functions inside the injected code, or write the code inside the target process' memory.
 - Then at last it restores the last state of the process again and continues the process.
 - Its main objective is just to write the library's code into the memory of the target process using `ptrace` and call that hook library using `dlopen` method.
 
-3.**Hooking library**
+3. **Hooking library**
 - This library hooks the functions of the `audioserver` process in the Android device and tries to achieve various goals like:
 	- Trigger the main hooks when VoIP mode is in `MODE_IN_COMMUNICATION`, and monitor the mode in real-time by hooking the function `AudioFlinger::setMode()`.
 	- It captures the audio packets in the format of PCM by hooking the `AudioStreamOut::write()`.
@@ -25,7 +25,7 @@
 	- The arguments are supplied to the function using the `RDI,RSI,RCX,RDX` and the result of the function called is obtained through `RAX` register to ensure that the hooks are applied inside the remote library.
 - Both address offset resolving and symbol lookup resolving methods were added in the hook file to be able to get the desired values and buffers.
 
-4.**SElinux Bypass**
+4. **SElinux Bypass**
 - This can be first easily bypassed using the command `setenforce 0` with root privileges.
 - There was a general method that can be used to accomplish this that was to use a custom magisk module to be able to modify the booting and init process of the Android device.The magisk app would modify and add custom SELinux rules in the policy of the Android device during the init process. But this was only limited to the devices rooted with Magisk patched ROM.
 - The second method is to modify the files governing the selinux inside the Android OS. 
@@ -56,6 +56,7 @@ The project was successfully tested on Android 14 x86_64 emulator of Pixel 6 in 
 	<img width="1958" height="967" alt="Pasted image 20250823183056" src="https://github.com/user-attachments/assets/39f77c21-8820-4a74-bb7f-69341a40faf3" />
 
 <img width="1958" height="967" alt="Pasted image 20250823183523" src="https://github.com/user-attachments/assets/e9f7af6c-fdac-4937-ba26-1af841076f61" />
+
 ---
 
 ## Running the POC code
