@@ -11,7 +11,7 @@
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
 
 using namespace NativeHook;
-///TODO: Add the fn to set the hooks for the functions using the fn symbols as well as the fn offsets.
+
 
 template <typename T>
 inline constexpr auto offsetOf(ElfW(Ehdr) * head, ElfW(Off) off)

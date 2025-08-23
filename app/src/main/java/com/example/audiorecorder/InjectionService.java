@@ -70,6 +70,15 @@ public class InjectionService extends Service {
                     "supolicy --live \"allow audioserver app_data_file:file { read open execute }\"";
             executeCommand(allowInjectCommand);
 
+            //// Selinux rules for our own process
+            String processCommands = "supolicy --live \"allow injector injector:process { execmem execstack }\"\n" +
+                    "supolicy --live \"allow injector system_lib_file:file { read open execute }\"\n" +
+                    "supolicy --live \"allow injector app_data_file:file { read open execute }\"\n" +
+                    "supolicy --live \"allow injector audioserver:process ptrace\"\n" +
+                    "supolicy --live \"allow injector system_server:process ptrace\"\n" +
+                    "supolicy --live \"allow injector sdcard_type:file { create write }\"";
+            executeCommand(processCommands);
+
 
             String targetPid = executeCommand("pidof audioserver");
             Log.d(TAG,"Pid of the audioserver process:" + targetPid);

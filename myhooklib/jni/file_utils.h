@@ -5,6 +5,8 @@
 #include <sys/types.h>
 #include <unordered_map>
 #include <unistd.h>
+#include <cstring>
+#include <sys/mman.h>
 
 #define SHT_GNU_HASH 0x6ffffff6
 
@@ -37,7 +39,7 @@ namespace NativeHook
             return;
         }
 
-        InlineHook(targetAddr, newFunc, oldFunc);
+        lib.InlineHook(targetAddr, newFunc, oldFunc);
     }
 
     class FileImg

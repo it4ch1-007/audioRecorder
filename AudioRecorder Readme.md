@@ -1,0 +1,68 @@
+### Description of Design
+**It is configured for x86_64 architectures Android devices for now.**
+`POC Application`
+- This is the Android application that spawns a service in the background for a short-time interval bypassing the need of a notification to launch a service added to Android (>8.0).
+- In the case of an exploit, it can gain the root in the Android device directly and can run the commands directly as root.
+- But in my case, I had the magisk rooted Android device and thus I used the `libsu` API of magisk application to execute root commands after elevating my process using magisk.
+- The `InjectionService` of this application runs with elevates privileges due to the magisk granted shell. It also runs the injector process in a privileged process that writes and loads the hook library into the remote target process.
+![[Pasted image 20250823183740.png]]
+
+`Injector`
+- The injector binary is designed exclusively for x86_64 architecture Android devices. It injects any shared object native library inside any process using the pid of the target process.
+- It uses `ptrace` syscall to stop the target process in its state and modify the registers of the process in order to call the functions inside the injected code, or write the code inside the target process' memory.
+- Then at last it restores the last state of the process again and continues the process.
+- Its main objective is just to write the library's code into the memory of the target process using `ptrace` and call that hook library using `dlopen` method.
+
+`Hooking library`
+- This library hooks the functions of the `audioserver` process in the Android device and tries to achieve various goals like:
+	- Trigger the main hooks when VoIP mode is in `MODE_IN_COMMUNICATION`, and monitor the mode in real-time by hooking the function `AudioFlinger::setMode()`.
+	- It captures the audio packets in the format of PCM by hooking the `AudioStreamOut::write()`.
+- It uses the custom Native inline hooking mechanism that hooks the functions of an elf inside Android device using various symbol resolution methods and the address resolving techniques.
+	- The basic principle of the method used here is to jump the RIP register to our code written into the target process' memory and then get it back to ensure the process does'nt crash.
+	- The arguments are supplied to the function using the `RDI,RSI,RCX,RDX` and the result of the function called is obtained through `RAX` register to ensure that the hooks are applied inside the remote library.
+- Both address offset resolving and symbol lookup resolving methods were added in the hook file to be able to get the desired values and buffers.
+
+`SElinux Bypass`
+- This can be first easily bypassed using the command `setenforce 0` with root privileges.
+- There was a general method that can be used to accomplish this that was to use a custom magisk module to be able to modify the booting and init process of the Android device.The magisk app would modify and add custom SELinux rules in the policy of the Android device during the init process. But this was only limited to the devices rooted with Magisk patched ROM.
+- The second method is to modify the files governing the selinux inside the Android OS. 
+	- If there is `selinuxfs` inside the `/proc/filesystems` file then selinux is enabled.
+	- To disable selinux, we can just write `mountPath/enforce` file with 0s that will disable selinux.
+	![[Pasted image 20250823182502.png]]
+- The method I used in this project is to add custom rules using `supolicy` inside the Android device. This was used to allow the audioserver process to write into the external storage directory (sdcard) and also allow our process to inject code into its process' memory making our process more hidden. 
+
+### Testing
+The project was successfully tested on Android 14 x86_64 emulator of Pixel 6 in Android Studio AVD format.
+(However it sometimes encounter some issues while running on the archs that issue still needs to be resolved. Maybe it is due to the fact that I am using the direct dumping method on a circular buffer that is resulting in errors.)
+### Process to identify the target functions
+- First thing is to get the value of mode inside the library constantly to know if any VoIP call is being made in real-time.
+	- This is done by hooking the `AudioFlinger::setMode()` function inside the libaudioflinger.so library.
+	- We will use the symbol associated with the function `_ZN7android12AudioFlinger7setModeEi` to hook the function.
+	- The mode value is passed as an argument to this function and so we can capture it simply by hooking the function and obtaining its arguments.
+![[Pasted image 20250823182914.png]]
+- Second thing is to get the value of PCM packets from the buffers inside the Threads.cpp
+	- This is done by hooking the `PlaybackThread::threadLoop_write()` function inside `Threads.cpp` inside the AOSP code and can be found inside the `libaudioflinger.so` library using the `mOutput->write()` method hooking. This method contains the buffer having the PCM packets data as its first argument so this can be used to dump their data. 
+	- This was done after dynamic debugging of the `libaudioflinger.so` library and the obtained results showed that the PCM packets were being passed to this hooked function and this was used to write the buffer to the HAL `Hardware Abstraction Layer`. Before this could happen we dumped the PCM packets inside the external storage directory. 
+	![[Pasted image 20250823182426.png]]
+	![[Pasted image 20250823183056.png]]
+![[Pasted image 20250823183523.png]]
+### Running the POC code
+- There are two files `Injector.cpp` and `hook.cpp` that have to be compiled using the bash script `compile.sh`. The Android ndk toolchains path and the adb must be in the path of the shell for this to work.
+![[Pasted image 20250823182659.png]]
+- This script basically compiles the `injector` and `libhook.so` outside the Android studio giving us more control over the binaries and their paths inside the Android device.
+	- Build the audioRecorder app and start the `InjectionService` using the `Start Service` button on the MainActivity of the app. 
+- Make a call to test the working of the poc code and obtain the file named `capturedPcm.dat` that will have all the data of the PCM packets. 
+### Challenges encountered
+- The first challenge was to execute commands silently. This was accomplished using the libSu api of Magisk but it was unable to recognise my Application as an app that is demanding root and was not showing it on the UI. So I spent a lot of time debugging and trying to identify the root problem. But ultimately I found out that the UI just passes the application's internal database `magisk.db` . Thus I pulled out the database itself and modified it using `sqlite3` and gained root silently for every command I execute using the application.
+![[Pasted image 20250823182808.png]]
+- The second challenge was configuring Android studio to use Dobby or some other frameworks for hooking. I guess it would be much easier to use these already made frameworks for hooking but I wanted to experiment more with my custom inline hooking framework I wrote during my previous project on zygisk detection , so I went through with my inline hook and modified it best to my use.
+![[Pasted image 20250823182738.png]]
+
+- The main challenge I faced in this was identifying the function to capture the buffers that will contain the pcm packets. To find some functions regarding this, I reverse engineered the AOSP code files responsible for the handling of PCM packets buffers  inside the `libaudioflinger.so`  library. This gave me a basic idea of which functions are actually responsible for the buffer handling. Then to get an advanced idea of how these buffers are handled step by step, I debugged the `libaudioflinger.so` library using dynamic Android debugger of IDA Pro. I identified some general functions like `memcpy,read and others` were used inside the `Threads.cpp` program code and they can be hooked to get the control of those buffers.
+
+### External resources used
+- https://github.com/topjohnwu/libsu
+- https://cs.android.com/
+- https://forum.tuts4you.com/topic/38546-function-hooking-on-x64/
+- https://dev.to/wireless90/inline-function-hooking-android-internals-ctf-ex5-pjh
+- https://github.com/strazzere/inject-hooks-android-rs

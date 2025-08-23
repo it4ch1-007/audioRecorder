@@ -24,11 +24,20 @@ status_t newAudioFlingersetMode(void* this_,int mode){
     return result;
 }
 status_t (*origAudioflingerSetMode)(void* this_ptr, int mode) = nullptr;
-
-void write_files()
-{
-    std::ofstream received_pcm_file("/sdcard/Download/capturedPcm.dat", std::ios::binary);
+ssize_t (*origAudioStreamOutWrite)(void* buffer, size_t numBytes) = nullptr;
+ssize_t newAudioStreamOutWrite(void* buffer,size_t numBytes){
+    if(is_mode_enabled){
+        FILE* fptr = fopen("/sdcard/Download/capturedPcm.dat","ab");
+        fwrite(buffer,1,numBytes,fptr);
+        free(fptr);
+    }
+    ssize_t result = origAudioStreamOutWrite(buffer,numBytes);
+    return result;
 }
+// void write_files()
+// {
+//     std::ofstream received_pcm_file("/sdcard/Download/capturedPcm.dat", std::ios::binary);
+// }
 void hook_main()
 {
     // hooking the fn to get the mode value
@@ -37,12 +46,11 @@ void hook_main()
     NativeHook::Hook(libraryPath,mangledSymbol,(void*)newAudioFlingersetMode,(void**)origAudioflingerSetMode);
 
 
+    const char* mangledSymbol2 = "_ZN7android14AudioStreamOut5writeEPKvj";
+    NativeHook::Hook(libraryPath,mangledSymbol2,(void*)newAudioStreamOutWrite,(void**)origAudioStreamOutWrite);
 
     // hooking to get the PCM packets that are received
     // hooking to get the PCM packets that are sent from the device to the other end.
-
-    //This should be a offset function hooking instead of the symbol lookup function hooking
-
     
 
 }
