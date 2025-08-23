@@ -35,6 +35,7 @@
 
 - The method I used in this project is to add custom rules using `supolicy` inside the Android device. This was used to allow the audioserver process to write into the external storage directory (sdcard) and also allow our process to inject code into its process' memory making our process more hidden. 
 ---
+
 ## Testing
 
 The project was successfully tested on Android 14 x86_64 emulator of Pixel 6 in Android Studio AVD format.
@@ -56,6 +57,7 @@ The project was successfully tested on Android 14 x86_64 emulator of Pixel 6 in 
 
 <img width="1958" height="967" alt="Pasted image 20250823183523" src="https://github.com/user-attachments/assets/e9f7af6c-fdac-4937-ba26-1af841076f61" />
 ---
+
 ## Running the POC code
 
 - There are two files `Injector.cpp` and `hook.cpp` that have to be compiled using the bash script `compile.sh`. The Android ndk toolchains path and the adb must be in the path of the shell for this to work.
@@ -65,6 +67,7 @@ The project was successfully tested on Android 14 x86_64 emulator of Pixel 6 in 
 	- Build the audioRecorder app and start the `InjectionService` using the `Start Service` button on the MainActivity of the app. 
 - Make a call to test the working of the poc code and obtain the file named `capturedPcm.dat` that will have all the data of the PCM packets.
 ---
+
 ## Challenges encountered
 
 - The first challenge was to execute commands silently. This was accomplished using the libSu api of Magisk but it was unable to recognise my Application as an app that is demanding root and was not showing it on the UI. So I spent a lot of time debugging and trying to identify the root problem. But ultimately I found out that the UI just passes the application's internal database `magisk.db` . Thus I pulled out the database itself and modified it using `sqlite3` and gained root silently for every command I execute using the application.
@@ -76,6 +79,7 @@ The project was successfully tested on Android 14 x86_64 emulator of Pixel 6 in 
 
 - The main challenge I faced in this was identifying the function to capture the buffers that will contain the pcm packets. To find some functions regarding this, I reverse engineered the AOSP code files responsible for the handling of PCM packets buffers  inside the `libaudioflinger.so`  library. This gave me a basic idea of which functions are actually responsible for the buffer handling. Then to get an advanced idea of how these buffers are handled step by step, I debugged the `libaudioflinger.so` library using dynamic Android debugger of IDA Pro. I identified some general functions like `memcpy,read and others` were used inside the `Threads.cpp` program code and they can be hooked to get the control of those buffers. So ultimately I hooked the `AudioStreamOut::write()` method in order to get the buffer as it is passed to it as argument and then dump it to the external storage directory.
 ---
+
 ## External resources used
 - https://github.com/topjohnwu/libsu
 - https://cs.android.com/
