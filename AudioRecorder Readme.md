@@ -5,7 +5,8 @@
 - In the case of an exploit, it can gain the root in the Android device directly and can run the commands directly as root.
 - But in my case, I had the magisk rooted Android device and thus I used the `libsu` API of magisk application to execute root commands after elevating my process using magisk.
 - The `InjectionService` of this application runs with elevates privileges due to the magisk granted shell. It also runs the injector process in a privileged process that writes and loads the hook library into the remote target process.
-![[Pasted image 20250823183740.png]]
+<img width="686" height="267" alt="Pasted image 20250823183740" src="https://github.com/user-attachments/assets/2b97eff9-2036-40b3-bd7a-53d545f2733f" />
+
 
 `Injector`
 - The injector binary is designed exclusively for x86_64 architecture Android devices. It injects any shared object native library inside any process using the pid of the target process.
@@ -28,7 +29,8 @@
 - The second method is to modify the files governing the selinux inside the Android OS. 
 	- If there is `selinuxfs` inside the `/proc/filesystems` file then selinux is enabled.
 	- To disable selinux, we can just write `mountPath/enforce` file with 0s that will disable selinux.
-	![[Pasted image 20250823182502.png]]
+	<img width="1206" height="575" alt="Pasted image 20250823182502" src="https://github.com/user-attachments/assets/e5120e34-ecb9-4c13-81b7-d935b05884f6" />
+
 - The method I used in this project is to add custom rules using `supolicy` inside the Android device. This was used to allow the audioserver process to write into the external storage directory (sdcard) and also allow our process to inject code into its process' memory making our process more hidden. 
 
 ### Testing
