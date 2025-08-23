@@ -35,8 +35,10 @@
 - The method I used in this project is to add custom rules using `supolicy` inside the Android device. This was used to allow the audioserver process to write into the external storage directory (sdcard) and also allow our process to inject code into its process' memory making our process more hidden. 
 
 ### Testing
+
 The project was successfully tested on Android 14 x86_64 emulator of Pixel 6 in Android Studio AVD format.
 (However it sometimes encounter some issues while running on the archs that issue still needs to be resolved. Maybe it is due to the fact that I am using the direct dumping method on a circular buffer that is resulting in errors.)
+
 ### Process to identify the target functions
 - First thing is to get the value of mode inside the library constantly to know if any VoIP call is being made in real-time.
 	- This is done by hooking the `AudioFlinger::setMode()` function inside the libaudioflinger.so library.
@@ -54,13 +56,16 @@ The project was successfully tested on Android 14 x86_64 emulator of Pixel 6 in 
 <img width="1958" height="967" alt="Pasted image 20250823183523" src="https://github.com/user-attachments/assets/e9f7af6c-fdac-4937-ba26-1af841076f61" />
 
 ### Running the POC code
+
 - There are two files `Injector.cpp` and `hook.cpp` that have to be compiled using the bash script `compile.sh`. The Android ndk toolchains path and the adb must be in the path of the shell for this to work.
 <img width="363" height="788" alt="Pasted image 20250823182659" src="https://github.com/user-attachments/assets/9dd997b3-a0ad-4818-a729-15418e76d7af" />
 
 - This script basically compiles the `injector` and `libhook.so` outside the Android studio giving us more control over the binaries and their paths inside the Android device.
 	- Build the audioRecorder app and start the `InjectionService` using the `Start Service` button on the MainActivity of the app. 
-- Make a call to test the working of the poc code and obtain the file named `capturedPcm.dat` that will have all the data of the PCM packets. 
+- Make a call to test the working of the poc code and obtain the file named `capturedPcm.dat` that will have all the data of the PCM packets.
+
 ### Challenges encountered
+
 - The first challenge was to execute commands silently. This was accomplished using the libSu api of Magisk but it was unable to recognise my Application as an app that is demanding root and was not showing it on the UI. So I spent a lot of time debugging and trying to identify the root problem. But ultimately I found out that the UI just passes the application's internal database `magisk.db` . Thus I pulled out the database itself and modified it using `sqlite3` and gained root silently for every command I execute using the application.
 <img width="355" height="721" alt="Pasted image 20250823182808" src="https://github.com/user-attachments/assets/8b37e24c-8d13-49e8-b576-60ede8bd8972" />
 
@@ -68,7 +73,7 @@ The project was successfully tested on Android 14 x86_64 emulator of Pixel 6 in 
 <img width="1372" height="1166" alt="Pasted image 20250823182738" src="https://github.com/user-attachments/assets/50972847-e82f-40d4-83f5-24c3140ed51b" />
 
 
-- The main challenge I faced in this was identifying the function to capture the buffers that will contain the pcm packets. To find some functions regarding this, I reverse engineered the AOSP code files responsible for the handling of PCM packets buffers  inside the `libaudioflinger.so`  library. This gave me a basic idea of which functions are actually responsible for the buffer handling. Then to get an advanced idea of how these buffers are handled step by step, I debugged the `libaudioflinger.so` library using dynamic Android debugger of IDA Pro. I identified some general functions like `memcpy,read and others` were used inside the `Threads.cpp` program code and they can be hooked to get the control of those buffers.
+- The main challenge I faced in this was identifying the function to capture the buffers that will contain the pcm packets. To find some functions regarding this, I reverse engineered the AOSP code files responsible for the handling of PCM packets buffers  inside the `libaudioflinger.so`  library. This gave me a basic idea of which functions are actually responsible for the buffer handling. Then to get an advanced idea of how these buffers are handled step by step, I debugged the `libaudioflinger.so` library using dynamic Android debugger of IDA Pro. I identified some general functions like `memcpy,read and others` were used inside the `Threads.cpp` program code and they can be hooked to get the control of those buffers. So ultimately I hooked the `AudioStreamOut::write()` method in order to get the buffer as it is passed to it as argument and then dump it to the external storage directory.
 
 ### External resources used
 - https://github.com/topjohnwu/libsu
