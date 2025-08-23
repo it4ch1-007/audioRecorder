@@ -1,5 +1,6 @@
 ### Description of Design
 **It is configured for x86_64 architectures Android devices for now.**
+
 `POC Application`
 - This is the Android application that spawns a service in the background for a short-time interval bypassing the need of a notification to launch a service added to Android (>8.0).
 - In the case of an exploit, it can gain the root in the Android device directly and can run the commands directly as root.
