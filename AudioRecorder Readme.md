@@ -9,7 +9,7 @@
 <img width="686" height="267" alt="Pasted image 20250823183740" src="https://github.com/user-attachments/assets/2b97eff9-2036-40b3-bd7a-53d545f2733f" />
 
 
-`Injector`
+`Injector` (Inside the main **app** directory as injector.cpp)
 - The injector binary is designed exclusively for x86_64 architecture Android devices. It injects any shared object native library inside any process using the pid of the target process.
 - It uses `ptrace` syscall to stop the target process in its state and modify the registers of the process in order to call the functions inside the injected code, or write the code inside the target process' memory.
 - Then at last it restores the last state of the process again and continues the process.
