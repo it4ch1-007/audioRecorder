@@ -49,7 +49,8 @@ The project was successfully tested on Android 14 x86_64 emulator of Pixel 6 in 
 <img width="1958" height="967" alt="Pasted image 20250823182914" src="https://github.com/user-attachments/assets/0c2b66a8-247a-432e-ad66-753c82d1f4c5" />
 
 - Second thing is to get the value of PCM packets from the buffers inside the Threads.cpp
-	- This is done by hooking the `PlaybackThread::threadLoop_write()` function inside `Threads.cpp` inside the AOSP code and can be found inside the `libaudioflinger.so` library using the `mOutput->write()` method hooking. This method contains the buffer having the PCM packets data as its first argument so this can be used to dump their data. 
+	- This is done by hooking the `PlaybackThread::threadLoop_write()` function inside `Threads.cpp` inside the AOSP code and can be found inside the `libaudioflinger.so` library using the `mOutput->write()` method hooking. This method contains the buffer having the PCM packets data as its first argument so this can be used to dump their data.
+    - The native library obtained from the Android device was stripped and so it had to be loaded with Android native symbols to be able to identify stripped symbols too using IDA Pro symbol loading feature.
 	- This was done after dynamic debugging of the `libaudioflinger.so` library and the obtained results showed that the PCM packets were being passed to this hooked function and this was used to write the buffer to the HAL `Hardware Abstraction Layer`. Before this could happen we dumped the PCM packets inside the external storage directory. 
 	<img width="1646" height="1048" alt="Pasted image 20250823182426" src="https://github.com/user-attachments/assets/5a8c769c-8d2b-415a-b3ff-9f9a642d861b" />
 
