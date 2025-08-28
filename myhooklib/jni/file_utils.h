@@ -9,44 +9,12 @@
 #include <sys/mman.h>
 
 #define SHT_GNU_HASH 0x6ffffff6
-
 namespace NativeHook
 {
-    template <typename T>
-    void Hook(const char *libraryPath, T symbolOrOffset, void *newFunc, void **oldFunc)
-    {
-        NativeHook::FileImg lib(libraryPath);
-        if (!lib.isValid())
-        {
-            // LOGD("Library %s does not exist inside the process..",libraryPath);
-            return;
-        }
-
-        void *targetAddr = nullptr;
-
-        if constexpr (std::is_integral_v<T>)
-        {
-            // if the offset is given
-            targetAddr = lib.getAddressFromOffset(static_cast<ElfW(Addr)>(symbolOrOffset));
-        }
-        else
-        {
-            targetAddr = reinterpret_cast<void *>(lib.getSymbAddress(symbolOrOffset));
-        }
-
-        if (targetAddr == nullptr)
-        {
-            return;
-        }
-
-        lib.InlineHook(targetAddr, newFunc, oldFunc);
-    }
-
     class FileImg
     {
     public:
         FileImg(std::string_view file);
-
         constexpr ElfW(Addr) getAddressFromOffset(ElfW(Addr) Offset) const
         {
             if (base != nullptr && Offset > 0)
@@ -56,19 +24,16 @@ namespace NativeHook
             }
             return 0;
         }
-
         template <typename T>
         constexpr T getAddressFromOffset(ElfW(Addr) offset) const
         {
             return reinterpret_cast<T>(getAddressFromOffset(offset));
         }
-
         // getting the offset of a symbol inside a file.
         constexpr ElfW(Addr) getSymbOffset(std::string_view name) const
         {
             return getSymbOffset(name, GnuHash(name), ElfHash(name));
         }
-
         // Getting the runtime memory address of that symbol
         constexpr ElfW(Addr) getSymbAddress(std::string_view name) const
         {
@@ -82,20 +47,16 @@ namespace NativeHook
                 return 0;
             }
         }
-
         std::string_view findSymbolName(std::string_view prefix) const
         {
             return LinearLookupByPrefix(prefix);
         }
-
         template <typename T>
         constexpr T getSymbAddress(std::string_view name) const
         {
             return reinterpret_cast<T>(getSymbAddress(name));
         }
-
         bool isValid() const { return base != nullptr; }
-
         const std::string name() const
         {
             return file;
@@ -115,7 +76,6 @@ namespace NativeHook
             memcpy(patch + 2, &newFunc, 8);
             patch[10] = 0xff;
             patch[11] = 0xe0;
-
             // Get the page size for this system
             long pageSize = sysconf(_SC_PAGESIZE);
             if (pageSize == -1)
@@ -141,17 +101,14 @@ namespace NativeHook
                     // LOGD("Failed to allocate memory for trampoline.");
                 }
             }
-
             // Apply the patch to the target function
             memcpy(target, patch, 12);
-
             // Restore the original memory permissions
             if (mprotect(pageStart, pageSize, PROT_READ | PROT_EXEC) != 0)
             {
                 // LOGD("mprotect failed to restore page permissions");
             }
         }
-
         ~FileImg();
 
     private:
@@ -163,7 +120,6 @@ namespace NativeHook
         constexpr static uint32_t ElfHash(std::string_view name);
         constexpr static uint32_t GnuHash(std::string_view name);
         bool findBaseAddr();
-
         std::string file;
         void *base = nullptr;
         char *buffer = nullptr;
@@ -188,7 +144,6 @@ namespace NativeHook
         uint32_t nbucket_{};
         uint32_t *bucket_ = nullptr;
         uint32_t *chain_ = nullptr;
-
         uint32_t gnu_nbucket_{};
         uint32_t gnu_symndx_{};
         uint32_t gnu_bloom_size_;
@@ -196,14 +151,43 @@ namespace NativeHook
         uintptr_t *gnu_bloom_filter_;
         uint32_t *gnu_bucket_;
         uint32_t *gnu_chain_;
-
         // unordered map that will store symbol table.
+
         mutable std::unordered_map<std::string_view, ElfW(Sym) *> symtabs_;
     };
 
+    template <typename T>
+    void Hook(const char *libraryPath, T symbolOrOffset, void *newFunc, void **oldFunc)
+    {
+        NativeHook::FileImg lib(libraryPath);
+        if (!lib.isValid())
+        {
+            // LOGD("Library %s does not exist inside the process..",libraryPath);
+            return;
+        }
+
+        void *targetAddr = nullptr;
+        if constexpr (std::is_integral_v<T>)
+        {
+            // if the offset is given
+            targetAddr = lib.getAddressFromOffset(static_cast<ElfW(Addr)>(symbolOrOffset));
+        }
+        else
+        {
+            targetAddr = reinterpret_cast<void *>(lib.getSymbAddress(symbolOrOffset));
+        }
+        if (targetAddr == nullptr)
+        {
+            return;
+        }
+        lib.InlineHook(targetAddr, newFunc, oldFunc);
+    }
+
     /*
-     * HASHING ALGOS
-     */
+
+    * HASHING ALGOS
+
+    */
     constexpr uint32_t FileImg::ElfHash(std::string_view name)
     {
         uint32_t h = 0, g = 0;
