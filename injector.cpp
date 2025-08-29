@@ -185,16 +185,16 @@ bool isSelinuxDisabled()
 {
     std::ifstream fileSystems("/proc/filesystems");
     if (!fileSystems)
-        return true;
+        return false;
     std::string line;
     while (getline(fileSystems, line))
     {
         if (line.find("selinuxfs") != std::string::npos)
         {
-            return true;
+            return false;
         }
     }
-    return false;
+    return true;
 }
 
 void disableSelinux()

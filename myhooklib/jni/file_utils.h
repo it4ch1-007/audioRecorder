@@ -73,7 +73,7 @@ namespace NativeHook
             unsigned char patch[12];
             patch[0] = 0x48;
             patch[1] = 0xb8;
-            memcpy(patch + 2, &newFunc, 8);
+            memcpy(patch + 2, &newFunc, sizeof(void*));
             patch[10] = 0xff;
             patch[11] = 0xe0;
             // Get the page size for this system
@@ -91,10 +91,20 @@ namespace NativeHook
             }
             if (*oldFunc == nullptr)
             {
-                *oldFunc = malloc(12);
+                *oldFunc = malloc(24);
                 if (*oldFunc != nullptr)
                 {
                     memcpy(*oldFunc, target, 12);
+                    unsigned char jmpBack[12];
+                    jmpBack[0] = 0x48;
+                    jmpBack[1] = 0xB8;
+                    void *jumpAddr = (void *)((uintptr_t)target + 12); // continue after patch
+                    memcpy(jmpBack + 2, &jumpAddr, 8);
+                    jmpBack[10] = 0xFF;
+                    jmpBack[11] = 0xE0;
+
+                    // Copy jump back into trampoline
+                    memcpy((unsigned char *)(*oldFunc) + 12, jmpBack, 12);
                 }
                 else
                 {
