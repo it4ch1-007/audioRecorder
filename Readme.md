@@ -33,8 +33,23 @@
 	- To disable selinux, we can just write `mountPath/enforce` file with 0s that will disable selinux.
 	<img width="1206" height="575" alt="Pasted image 20250823182502" src="https://github.com/user-attachments/assets/e5120e34-ecb9-4c13-81b7-d935b05884f6" />
 
-- The method I used in this project is to add custom rules using `supolicy` inside the Android device. This was used to allow the audioserver process to write into the external storage directory (sdcard) and also allow our process to inject code into its process' memory making our process more hidden. 
+- The method I used in this project is to add custom rules using `supolicy` inside the Android device. This was used to allow the audioserver process to write into the external storage directory (sdcard) and also allow our process to inject code into its process' memory making our process more hidden.
 ---
+
+## Writing the output (Maintaining real-time PCM data packets)
+- Both the hooked functions `newAudioStreamOutWrite` and `newAudioStreamInRead` have their own buffers that contain the small chunks of pcm data coming from into the `libaudioflinger.so`.
+- To maintain authenticity and info about each chunk. Each chunk is transferred into the format {timestamp,AudioDirection,AudioType,dataBytes} using the structure Packet.
+- Even if the user doesn't speak the PCM data is transferred with the `ampluitude = 0`. This will corrupt our data and fill the pcm bytes with the silenced sound. To tackle this, I have used `VAD` (Voice Activity Dectector) check that tells if the chunk of data resembled silenced data or not using Fast Fourier Transform algorithm to determine its amplitude.
+- The hangover delay is introduced in order to maintain the situations where the silenced voice follows the person's authentic voice to not get only non-silenced voices and maintain pauses between the speeches.
+- Using the conversion state structure, I have implemented silencing the packets and writing it to the output file only when both the streams are silenced.
+- A custom thread-safe priority queue is used to store the packets incoming from both the streams that easily provide us the packet with the earliest timestamp in real-time. This bypasses the need to sort them again and again after storing in any order. And also it satisfies the need to handle the case when two packets have the same timestamps (is very rare as timestamps are used in nano seconds).
+- The queue is made and used as a bounded queue to make sure that it doesn't deny any data from either of the streams.
+- A separate thread `The writer thread` is used to write to the file in real-time using the earliest possible timestamp inside the `audio_queue`.
+
+```
+If specified or desired then we can also write the direction of the stream alongwith its pcm data bytes. This will allow us to differentiate it if we are reading it using a python script. But the audio difference can be easily identified even if the data bytes are directly written into the output file.
+```
+
 
 ## Testing
 
@@ -80,6 +95,8 @@ The project was successfully tested on Android 14 x86_64 emulator of Pixel 6 in 
 
 
 - The main challenge I faced in this was identifying the function to capture the buffers that will contain the pcm packets. To find some functions regarding this, I reverse engineered the AOSP code files responsible for the handling of PCM packets buffers  inside the `libaudioflinger.so`  library. This gave me a basic idea of which functions are actually responsible for the buffer handling. Then to get an advanced idea of how these buffers are handled step by step, I debugged the `libaudioflinger.so` library using dynamic Android debugger of IDA Pro. I identified some general functions like `memcpy,read and others` were used inside the `Threads.cpp` program code and they can be hooked to get the control of those buffers. So ultimately I hooked the `AudioStreamOut::write()` method in order to get the buffer as it is passed to it as argument and then dump it to the external storage directory.
+
+- There is a scope of error if the FFT algorithm used here to determine if the pcm packet is silenced or not, takes a long time to determine the amplitude of the data. If this happens, then it may lead to loss of data. The solution might be to use a better and simpler as well as faster algorithm than FFT.
 ---
 
 ## External resources used
@@ -88,3 +105,4 @@ The project was successfully tested on Android 14 x86_64 emulator of Pixel 6 in 
 - https://forum.tuts4you.com/topic/38546-function-hooking-on-x64/
 - https://dev.to/wireless90/inline-function-hooking-android-internals-ctf-ex5-pjh
 - https://github.com/strazzere/inject-hooks-android-rs
+- https://github.com/AlbertoFormaggio1/Voice-Activity-Detector
