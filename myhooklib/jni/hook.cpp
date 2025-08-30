@@ -22,7 +22,6 @@ typedef int32_t status_t;
 std::atomic<bool> is_mode_enabled = false;
 std::atomic<bool> is_writer_thread_running = false;
 std::thread writer_thread;
-// std::vector<std::byte> received_packets, sent_packets;
 
 const auto HANGOVER_DURATION = std::chrono::milliseconds(400);
 
@@ -42,7 +41,7 @@ struct AudioPacket
     std::chrono::steady_clock::time_point timestamp;
     AudioDirection direction;
     PacketType type;
-    std::vector<int16_t> data;
+    std::vector<int16_t> data; //int16 datatype will lead to lesser chances of loss of data...
 
     // custom condition for the priority queue...
     bool operator>(const AudioPacket &other) const
@@ -51,7 +50,7 @@ struct AudioPacket
     }
 };
 
-struct ConversationState
+struct ConversationState //For hangover states
 {
     std::mutex mtx;
     std::chrono::steady_clock::time_point last_voice_activity_time{std::chrono::steady_clock::now()};
@@ -116,12 +115,13 @@ void file_writer_task()
 {
     std::ofstream pcm_file("/sdcard/Download/capturedPcm.dat", std::ios::binary);
     if (!pcm_file.is_open())
-    { // LOGI("Failed to open output file!");
+    { //Failed to open the file...
         return;
     }
     is_writer_thread_running = true;
     while (is_writer_thread_running || !audio_queue.is_empty())
     {
+        //writing into the output file...
         AudioPacket packet;
         audio_queue.wait_and_pop(packet);
         pcm_file.write(reinterpret_cast<const char*>(packet.data.data()), packet.data.size() * sizeof(int16_t));
@@ -150,7 +150,7 @@ void audio_packet_handler(void *buffer, size_t num_bytes, AudioDirection directi
         packet_.direction = direction;
         packet_.type = PacketType::VOICE_CANDIDATE;
         packet_.data.assign(pcm_buffer, pcm_buffer + num_samples);
-        audio_queue.try_push(std::move(packet_));
+        audio_queue.try_push(std::move(packet_)); //moving to bypass temporary copying of data
     }
     else
     {
@@ -196,14 +196,14 @@ status_t newAudioFlingersetMode(void *this_, int mode)
     status_t result = origAudioflingerSetMode(this_, mode);
     return result;
 }
-
+//To read the data heard through the speaker...
 ssize_t newAudioStreamOutWrite(void *buffer, size_t numBytes)
 {
     audio_packet_handler(buffer, numBytes, AudioDirection::IN);
     ssize_t result = origAudioStreamOutWrite(buffer, numBytes);
     return result;
 }
-
+//To read the data spoken into the microphone
 status_t newAudioStreamInRead(void *buffer, size_t bytes, size_t *read)
 {
     audio_packet_handler(buffer, bytes, AudioDirection::OUT);
