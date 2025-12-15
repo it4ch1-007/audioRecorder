@@ -79,6 +79,21 @@ public class InjectionService extends Service {
                     "supolicy --live \"allow injector sdcard_type:file { create write }\"";
             executeCommand(processCommands);
 
+            ////SELinux rules for hooking any process
+            String domainCommands = "supolicy --live \" allow domain domain:process { execmem }\"\n" +
+                    "supolicy --live \" allow domain injector:dir { search }\"\n" +
+                    "supolicy --live \" allow domain injector:file { open read write getattr execute ?map }\"" +
+                    "supolicy --live \" allow domain shell_data_file:dir { search }\"\n" +
+                    "supolicy --live \" allow domain zygote_exec:file { execute }\"\n" +
+                    "supolicy --live \" allow domain injector:process { sigchild }\"\n" +
+                    "supolicy --live \" allow domain injector:fd { use }\"\n" +
+                    "supolicy --live \" allow domain injector:unix_stream_socket { connectto read write getattr getopt }\"\n" +
+                    "supolicy --live \" allow domain injector:tcp_socket { read write getattr getopt }\"\n" +
+                    "supolicy --live \" allow zygote zygote:capability { sys_ptrace }\"\n" +
+                    "supolicy --live \" allow ?app_zygote zygote_exec:file { read }\"\n" +
+                    "supolicy --live \" allow system_server ?apex_art_data_file:file { execute }\"\n"
+            ;
+            executeCommand(domainCommands);
 
             String targetPid = executeCommand("pidof audioserver");
             Log.d(TAG,"Pid of the audioserver process:" + targetPid);

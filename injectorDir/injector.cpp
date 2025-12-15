@@ -13,24 +13,26 @@
 #include <sys/user.h>
 #include <link.h>
 #include <sys/system_properties.h>
-
+#include "seLinuxBypass.h"
+//
 #define LIBC_PATH_OLD "/system/lib64/libc.so"
 #define LIBC_PATH_NEW "/apex/com.android.runtime/lib64/bionic/libc.so"
 #define LINKER_PATH_OLD "/system/lib64/libdl.so"
 #define LINKER_PATH_NEW "/apex/com.android.runtime/lib64/bionic/libdl.so"
 #define VNDK_LIB_PATH "/system/lib64/libRS.so"
-
+//
 #define LOG_TAG "Injector.cpp"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
 
+//
 struct PhdrCallbackData
 {
     const char *lib_name;
     void *base_addr;
 };
 static int android_os_version = -1;
-
-// find the Android Version of the device
+//
+//// find the Android Version of the device
 int GetOSVersion()
 {
     if (android_os_version != -1)
@@ -44,7 +46,7 @@ int GetOSVersion()
 
     return android_os_version;
 }
-
+//
 int find_lib_base_callback(struct dl_phdr_info *info, size_t size, void *data)
 {
     PhdrCallbackData *callback_data = (PhdrCallbackData *)data;
@@ -55,10 +57,10 @@ int find_lib_base_callback(struct dl_phdr_info *info, size_t size, void *data)
     }
     return 0;
 }
-
-/*
- * Use /proc/<pid>/maps to get the base address of the library and the then the function's offset
- */
+//
+///*
+// * Use /proc/<pid>/maps to get the base address of the library and the then the function's offset
+// */
 void *get_remote_lib_address(pid_t pid, const char *lib_name)
 {
     char maps_path[256];
@@ -76,10 +78,7 @@ void *get_remote_lib_address(pid_t pid, const char *lib_name)
     }
     return nullptr;
 }
-
-/*
- * Getting the local lib address using dl_iterate_phdr function.
- */
+//
 void *get_local_lib_address(const char *lib_name)
 {
     PhdrCallbackData data;
@@ -112,7 +111,7 @@ void *get_remote_function_address(pid_t pid, pid_t local_pid, const char *lib_na
 
     return (void *)((long)remote_lib_addr + fn_off);
 }
-
+//
 long execute_remote_function(pid_t pid, void *func_addr, long *params, int num_params,
                              struct user_regs_struct *regs)
 {
@@ -161,10 +160,10 @@ long execute_remote_function(pid_t pid, void *func_addr, long *params, int num_p
 
     return regs->rax;
 }
-
-/*
- * Writing the library to the remote mapped memory
- */
+//
+///*
+// * Writing the library to the remote mapped memory
+// */
 int write_to_remote_address(pid_t pid, void *dest, const void *src, size_t size)
 {
     for (size_t i = 0; i < size; i += sizeof(long))
@@ -177,7 +176,7 @@ int write_to_remote_address(pid_t pid, void *dest, const void *src, size_t size)
     }
     return 0;
 }
-
+//
 /*
  * Helper functions for selinux disabling
  */
@@ -196,7 +195,7 @@ bool isSelinuxDisabled()
     }
     return true;
 }
-
+//
 void disableSelinux()
 {
     std::ifstream procMounts("/proc/mounts");
@@ -221,9 +220,13 @@ void disableSelinux()
         }
     }
 }
-
+//
 int main(int argc, char **argv)
 {
+    //TODO: Add the fn to get the symbols out of a process like frida enumerateSymbols fn.
+    //TODO: Add the fn to hook the symbols found inside that library.
+
+
     if (argc < 4)
     {
         LOGD("Usage: injector <pidRemote> <lib_path> <pidLocal>");
@@ -352,3 +355,10 @@ int main(int argc, char **argv)
     LOGD("Successfully detached the injector process");
     return 0;
 }
+
+//int main(){
+//    return 0;
+//}
+
+//TODO: Implement the functiosn just like of frida-server and frida-gum that will work as injector
+

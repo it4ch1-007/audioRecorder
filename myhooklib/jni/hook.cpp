@@ -1,5 +1,5 @@
 #include <iostream>
-// #include <android/log.h>
+ #include <android/log.h>
 #include "file_utils.h"
 #include <queue>
 #include "packet.h"
@@ -215,13 +215,14 @@ void hook_main()
 
 {
     // hooking the fn to get the mode value
-    const char *libraryPath = "libaudioflinger.so";
-    const char *mangledSymbol = "_ZN7android12AudioFlinger7setModeEi";
-    NativeHook::Hook(libraryPath, mangledSymbol, (void *)newAudioFlingersetMode, (void **)origAudioflingerSetMode);
-    const char *mangledSymbol2 = "_ZN7android14AudioStreamOut5writeEPKvj";
-    NativeHook::Hook(libraryPath, mangledSymbol2, (void *)newAudioStreamOutWrite, (void **)origAudioStreamOutWrite);
-    const char *mangledSymbol3 = "_ZN7android13AudioStreamIn4readEPvj";
-    NativeHook::Hook(libraryPath, mangledSymbol3, (void *)newAudioStreamInRead, (void **)origAudioStreamInRead);
+    LOGI("HOOKED LIBRARY.....");
+//    const char *libraryPath = "libaudioflinger.so";
+//    const char *mangledSymbol = "_ZN7android12AudioFlinger7setModeEi";
+//    NativeHook::Hook(libraryPath, mangledSymbol, (void *)newAudioFlingersetMode, (void **)origAudioflingerSetMode);
+//    const char *mangledSymbol2 = "_ZN7android14AudioStreamOut5writeEPKvj";
+//    NativeHook::Hook(libraryPath, mangledSymbol2, (void *)newAudioStreamOutWrite, (void **)origAudioStreamOutWrite);
+//    const char *mangledSymbol3 = "_ZN7android13AudioStreamIn4readEPvj";
+//    NativeHook::Hook(libraryPath, mangledSymbol3, (void *)newAudioStreamInRead, (void **)origAudioStreamInRead);
     // hooking to get the PCM packets that are received
     // hooking to get the PCM packets that are sent from the device to the other end.
 }
